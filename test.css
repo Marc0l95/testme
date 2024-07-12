@@ -1,82 +1,87 @@
-/* App.css */
 body {
-  background-color: #2e4c2f;
-  color: white;
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
 }
 
 .App {
-  padding: 20px;
-}
-
-.Home {
   text-align: center;
 }
 
+.app-container {
+  background-color: #e8f5e9;
+  padding: 20px;
+  border-radius: 10px;
+  width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 h1 {
+  color: #388e3c;
   margin-bottom: 20px;
 }
 
-.nav-button {
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
+.dropdown-container,
+.input-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.dropdown-label,
+.input-label {
+  flex: 1;
+  text-align: left;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.dropdown-button,
+.input-field {
+  flex: 2;
+  padding: 5px;
+  border: 1px solid #2e7d32;
   border-radius: 5px;
-  cursor: pointer;
-}
-
-.nav-button:hover {
-  background-color: #45a049;
-}
-
-.dropdown-container {
-  margin-bottom: 15px;
-}
-
-.dropdown-label {
-  margin-right: 10px;
+  outline: none;
 }
 
 .dropdown-button {
-  padding: 5px 10px;
+  background-color: #81c784;
+  color: white;
   cursor: pointer;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
 }
 
 .dropdown-menu {
   position: absolute;
-  z-index: 1;
-  list-style: none;
+  background-color: #ffffff;
+  border: 1px solid #2e7d32;
+  border-radius: 5px;
+  margin-top: 5px;
+  list-style-type: none;
   padding: 0;
-  margin: 0;
-  background-color: white;
-  border: 1px solid #ccc;
+  width: 200px;
+  z-index: 1000;
 }
 
 .dropdown-menu-item {
-  padding: 5px 10px;
+  padding: 10px;
   cursor: pointer;
 }
 
-.input-container {
-  margin-bottom: 15px;
-}
-
-.input-label {
-  margin-right: 10px;
+.dropdown-menu-item:hover {
+  background-color: #a5d6a7;
 }
 
 .input-field {
-  padding: 5px;
-  border: 1px solid #ccc;
+  background-color: #ffffff;
 }
 
-.app-container {
-  background-color: #3b5c3f;
-  border-radius: 8px;
-  padding: 20px;
+button:focus,
+input:focus {
+  border-color: #66bb6a;
+}
+
+div[style] {
+  font-weight: bold;
+  color: #388e3c;
+  margin-top: 20px;
 }
