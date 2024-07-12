@@ -11,8 +11,25 @@ body {
   padding: 20px;
 }
 
+.Home {
+  text-align: center;
+}
+
 h1 {
   margin-bottom: 20px;
+}
+
+.nav-button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background-color: #45a049;
 }
 
 .dropdown-container {
