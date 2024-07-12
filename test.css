@@ -1,4 +1,12 @@
 /* App.css */
+body {
+  background-color: #2e4c2f;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 .App {
   padding: 20px;
 }
@@ -48,4 +56,10 @@ h1 {
 .input-field {
   padding: 5px;
   border: 1px solid #ccc;
+}
+
+.app-container {
+  background-color: #3b5c3f;
+  border-radius: 8px;
+  padding: 20px;
 }
