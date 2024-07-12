@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './App.css';
+import '../App.css';
 
 function GcpCalculator() {
   const [fieldA, setFieldA] = useState('Option A1');
@@ -8,19 +8,25 @@ function GcpCalculator() {
   const [fieldC, setFieldC] = useState('Option C1');
   const [cpu, setCpu] = useState('');
   const [memory, setMemory] = useState('');
-  const [subtotal, setSubtotal] = useState(0);
+  const [costs, setCosts] = useState({
+    subtotal: 0,
+    items: []
+  });
 
   const optionsA = ['Option A1', 'Option A2', 'Option A3'];
   const optionsB = ['Option B1', 'Option B2', 'Option B3'];
   const optionsC = ['Option C1', 'Option C2', 'Option C3'];
 
   useEffect(() => {
-    calculateSubtotal();
+    calculateCosts();
   }, [fieldA, fieldB, fieldC, cpu, memory]);
 
-  const calculateSubtotal = async () => {
+  const calculateCosts = async () => {
     if (!cpu && !memory) {
-      setSubtotal(0);
+      setCosts({
+        subtotal: 0,
+        items: []
+      });
       return;
     }
     try {
@@ -31,12 +37,32 @@ function GcpCalculator() {
         cpu: parseFloat(cpu) || 0,
         memory: parseFloat(memory) || 0
       });
-      const calculatedSubtotal = response.data.cost;
-      setSubtotal(calculatedSubtotal);
+      const data = response.data;
+      setCosts({
+        subtotal: data.cost,
+        items: [
+          { label: 'How many clusters', input: cpu, cost1: data.cost1, cost2: data.cost2, cost3: data.cost3, cost4: data.cost4 },
+          { label: 'Size of nodes', input: memory, cost1: data.cost1 * 2, cost2: data.cost2 * 2, cost3: data.cost3 * 2, cost4: data.cost4 * 2 }
+          // Add more items as necessary
+        ]
+      });
     } catch (error) {
       console.error("There was an error making the request:", error);
-      setSubtotal(0);
+      setCosts({
+        subtotal: 0,
+        items: []
+      });
     }
+  };
+
+  const handleCpuChange = (e) => {
+    const value = e.target.value;
+    setCpu(value === '' ? '' : parseFloat(value));
+  };
+
+  const handleMemoryChange = (e) => {
+    const value = e.target.value;
+    setMemory(value === '' ? '' : parseFloat(value));
   };
 
   const Dropdown = ({ label, options, value, onChange }) => {
@@ -50,21 +76,23 @@ function GcpCalculator() {
     return (
       <div className="dropdown-container">
         <label className="dropdown-label">{label}: </label>
-        <button
-          onClick={() => setShowOptions(!showOptions)}
-          className="dropdown-button"
-        >
-          {value}
-        </button>
-        {showOptions && (
-          <ul className="dropdown-menu">
-            {options.map((option) => (
-              <li key={option} onClick={() => handleOptionClick(option)} className="dropdown-menu-item">
-                {option}
-              </li>
-            ))}
-          </ul>
-        )}
+        <div style={{ position: 'relative' }}>
+          <button
+            onClick={() => setShowOptions(!showOptions)}
+            className="dropdown-button"
+          >
+            {value}
+          </button>
+          {showOptions && (
+            <ul className="dropdown-menu">
+              {options.map((option) => (
+                <li key={option} onClick={() => handleOptionClick(option)} className="dropdown-menu-item">
+                  {option}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     );
   };
@@ -102,7 +130,7 @@ function GcpCalculator() {
           <input
             type="number"
             value={cpu}
-            onChange={(e) => setCpu(e.target.value)}
+            onChange={handleCpuChange}
             className="input-field"
           />
         </div>
@@ -111,13 +139,40 @@ function GcpCalculator() {
           <input
             type="number"
             value={memory}
-            onChange={(e) => setMemory(e.target.value)}
+            onChange={handleMemoryChange}
             className="input-field"
           />
         </div>
-        <div style={{ marginTop: '20px' }}>
-          Compute Engine Subtotal: ${subtotal.toFixed(2)}
-        </div>
+        <table className="cost-table">
+          <thead>
+            <tr>
+              <th>Compute</th>
+              <th>Inputs</th>
+              <th>Cost 1</th>
+              <th>Cost 2</th>
+              <th>Cost 3</th>
+              <th>Cost 4</th>
+            </tr>
+          </thead>
+          <tbody>
+            {costs.items.map((item, index) => (
+              <tr key={index}>
+                <td>{item.label}</td>
+                <td>{item.input}</td>
+                <td>${item.cost1.toFixed(2)}</td>
+                <td>${item.cost2.toFixed(2)}</td>
+                <td>${item.cost3.toFixed(2)}</td>
+                <td>${item.cost4.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="5">Subtotal</td>
+              <td>${costs.subtotal.toFixed(2)}</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     </div>
   );
