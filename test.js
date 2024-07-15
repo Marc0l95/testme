@@ -65,37 +65,51 @@ function GcpCalculator() {
     setMemory(value === '' ? '' : parseFloat(value));
   };
 
-  const Dropdown = ({ label, options, value, onChange }) => {
-    const [showOptions, setShowOptions] = useState(false);
+const Dropdown = ({ label, options, value, onChange }) => {
+  const [showOptions, setShowOptions] = useState(false);
+  const dropdownRef = useRef(null);
 
-    const handleOptionClick = (option) => {
-      onChange(option);
-      setShowOptions(false);
-    };
-
-    return (
-      <div className="dropdown-container">
-        <label className="dropdown-label">{label}: </label>
-        <div style={{ position: 'relative' }}>
-          <button
-            onClick={() => setShowOptions(!showOptions)}
-            className="dropdown-button"
-          >
-            {value}
-          </button>
-          {showOptions && (
-            <ul className="dropdown-menu">
-              {options.map((option) => (
-                <li key={option} onClick={() => handleOptionClick(option)} className="dropdown-menu-item">
-                  {option}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-    );
+  const handleOptionClick = (option) => {
+    onChange(option);
+    setShowOptions(false);
   };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowOptions(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="dropdown-container" ref={dropdownRef}>
+      <label className="dropdown-label">{label}: </label>
+      <div style={{ position: 'relative' }}>
+        <button
+          onClick={() => setShowOptions(!showOptions)}
+          className="dropdown-button"
+        >
+          {value}
+        </button>
+        {showOptions && (
+          <ul className="dropdown-menu">
+            {options.map((option) => (
+              <li key={option} onClick={() => handleOptionClick(option)} className="dropdown-menu-item">
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+};
 
   return (
     <div className="App">
