@@ -20,8 +20,21 @@ h1 {
   margin-bottom: 20px;
 }
 
-.dropdown-container,
-.input-container {
+.input-section {
+  display: flex;
+}
+
+.input-fields {
+  flex: 1;
+}
+
+.details-box {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.input-container,
+.dropdown-container {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
@@ -80,6 +93,12 @@ input:focus {
   border-color: #66bb6a;
 }
 
+.subtotal {
+  margin-top: 20px;
+  font-weight: bold;
+  color: #388e3c;
+}
+
 .cost-table {
   width: 100%;
   margin-top: 20px;
@@ -96,9 +115,4 @@ input:focus {
 .cost-table th {
   background-color: #81c784;
   color: white;
-}
-
-.cost-table tfoot td {
-  font-weight: bold;
-  color: #388e3c;
 }
