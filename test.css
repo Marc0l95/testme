@@ -7,7 +7,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #333;
+  background-color: #388e3c;
   color: white;
 }
 
@@ -22,14 +22,15 @@ body {
 .button {
   margin: 0 10px;
   padding: 10px 20px;
-  background-color: #555;
+  background-color: #66bb6a;
   color: white;
   cursor: pointer;
   border-radius: 5px;
+  text-align: center;
 }
 
 .button:hover {
-  background-color: #777;
+  background-color: #81c784;
 }
 
 .App {
