@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../App.css';
+import '../styles.css'; // Consolidated CSS file
 import Dropdown from './Dropdown'; // Ensure correct path
+import Banner from './Banner'; // Import the Banner component
+import { resetAllFields } from './resetUtils'; // Import the reset utility function
 
 function GcpCalculator() {
-  const [fieldA, setFieldA] = useState('Option A1');
-  const [fieldB, setFieldB] = useState('Option B1');
-  const [fieldC, setFieldC] = useState('Option C1');
-  const [cpu, setCpu] = useState('');
-  const [memory, setMemory] = useState('');
+  const getInitialValue = (key, defaultValue) => {
+    const storedValue = localStorage.getItem(key);
+    return storedValue !== null ? storedValue : defaultValue;
+  };
+
+  const getInitialNumberValue = (key, defaultValue) => {
+    const storedValue = localStorage.getItem(key);
+    return storedValue !== null ? parseFloat(storedValue) : defaultValue;
+  };
+
+  const [fieldA, setFieldA] = useState(getInitialValue('fieldA', 'Option A1'));
+  const [fieldB, setFieldB] = useState(getInitialValue('fieldB', 'Option B1'));
+  const [fieldC, setFieldC] = useState(getInitialValue('fieldC', 'Option C1'));
+  const [cpu, setCpu] = useState(getInitialNumberValue('cpu', ''));
+  const [memory, setMemory] = useState(getInitialNumberValue('memory', ''));
   const [subtotal, setSubtotal] = useState(0);
   const [details, setDetails] = useState([]);
 
@@ -19,6 +31,26 @@ function GcpCalculator() {
   useEffect(() => {
     calculateSubtotal();
   }, [fieldA, fieldB, fieldC, cpu, memory]);
+
+  useEffect(() => {
+    localStorage.setItem('fieldA', fieldA);
+  }, [fieldA]);
+
+  useEffect(() => {
+    localStorage.setItem('fieldB', fieldB);
+  }, [fieldB]);
+
+  useEffect(() => {
+    localStorage.setItem('fieldC', fieldC);
+  }, [fieldC]);
+
+  useEffect(() => {
+    localStorage.setItem('cpu', cpu);
+  }, [cpu]);
+
+  useEffect(() => {
+    localStorage.setItem('memory', memory);
+  }, [memory]);
 
   const calculateSubtotal = async () => {
     if (!cpu && !memory) {
@@ -69,8 +101,15 @@ function GcpCalculator() {
     }
   };
 
+  const handleReset = () => {
+    resetAllFields(setFieldA, setFieldB, setFieldC, setCpu, setMemory);
+    setSubtotal(0);
+    setDetails([]);
+  };
+
   return (
     <div className="App">
+      <Banner onReset={handleReset} />
       <div className="app-container">
         <h1>Compute Engine Calculator</h1>
         <div className="input-section">
@@ -141,6 +180,25 @@ function GcpCalculator() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+      <div className="app-container">
+        <h1>Detailed Costs Summary</h1>
+        <div className="input-section">
+          <div className="input-fields">
+            {details.map((item, index) => (
+              <div key={index} className="input-container">
+                <label className="input-label">{item.label}: </label>
+                <div className="input-field">
+                  <p>Input: {item.input}</p>
+                  <p>Cost 1: ${item.cost1.toFixed(2)}</p>
+                  <p>Cost 2: ${item.cost2.toFixed(2)}</p>
+                  <p>Cost 3: ${item.cost3.toFixed(2)}</p>
+                  <p>Cost 4: ${item.cost4.toFixed(2)}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
