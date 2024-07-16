@@ -52,7 +52,7 @@ body {
   border-radius: 10px;
   width: 100%;
   max-width: 1200px;
-  margin: 80px auto 0 auto; /* Adjusted margin to account for the fixed banner */
+  margin: 20px auto; /* Adjusted margin for spacing */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -63,15 +63,13 @@ h1 {
 
 .input-section {
   display: flex;
+  justify-content: space-between; /* Ensure space between input fields and detailed costs */
 }
 
-.input-fields {
-  flex: 1;
-  margin-right: 20px;
-}
-
+.input-fields,
 .details-box {
-  flex: 1;
+  flex: 1; /* Ensure both input fields and detailed costs take up equal space */
+  margin-right: 20px; /* Add space between input fields and detailed costs */
 }
 
 .input-container,
