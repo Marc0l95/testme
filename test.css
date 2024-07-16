@@ -5,18 +5,19 @@ body {
 .banner {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; /* Align items vertically in the center */
   padding: 10px 20px;
   background-color: #388e3c;
   color: white;
 }
 
 .logo img {
-  height: 50px;
+  height: 50px; /* Adjust as needed */
 }
 
 .button-container {
   display: flex;
+  align-items: center; /* Ensure buttons are aligned vertically with the logo */
 }
 
 .button {
@@ -27,6 +28,8 @@ body {
   cursor: pointer;
   border-radius: 5px;
   text-align: center;
+  display: flex;
+  align-items: center; /* Ensure text inside buttons is centered vertically */
 }
 
 .button:hover {
