@@ -11,6 +11,11 @@ body {
   color: white;
 }
 
+.logo {
+  display: flex;
+  align-items: center; /* Align logo vertically */
+}
+
 .logo img {
   height: 50px; /* Adjust as needed */
 }
@@ -30,6 +35,7 @@ body {
   text-align: center;
   display: flex;
   align-items: center; /* Ensure text inside buttons is centered vertically */
+  height: 50px; /* Adjust to match logo height if needed */
 }
 
 .button:hover {
