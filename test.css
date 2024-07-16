@@ -2,6 +2,36 @@ body {
   font-family: Arial, sans-serif;
 }
 
+.banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+}
+
+.logo img {
+  height: 50px;
+}
+
+.button-container {
+  display: flex;
+}
+
+.button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #555;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background-color: #777;
+}
+
 .App {
   text-align: center;
 }
@@ -12,7 +42,7 @@ body {
   border-radius: 10px;
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 80px auto 0 auto; /* Adjusted margin to account for the fixed banner */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
