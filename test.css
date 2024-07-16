@@ -1,11 +1,7 @@
-/* styles.css */
-
-/* General Styles */
 body {
   font-family: Arial, sans-serif;
 }
 
-/* Banner Styles */
 .banner {
   display: flex;
   justify-content: space-between;
@@ -37,7 +33,6 @@ body {
   background-color: #81c784;
 }
 
-/* App Styles */
 .App {
   text-align: center;
 }
@@ -57,7 +52,6 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Input Section Styles */
 .input-section {
   display: flex;
 }
@@ -71,7 +65,6 @@ h1 {
   flex: 1;
 }
 
-/* Dropdown and Input Styles */
 .input-container,
 .dropdown-container {
   display: flex;
@@ -110,13 +103,15 @@ h1 {
   margin-top: 5px;
   list-style-type: none;
   padding: 0;
-  width: 100%;
+  width: auto; /* Ensure the width is auto */
+  min-width: 100%; /* Ensures it is at least as wide as the button */
   z-index: 1000;
 }
 
 .dropdown-menu-item {
   padding: 10px;
   cursor: pointer;
+  white-space: nowrap; /* Prevent text from wrapping */
 }
 
 .dropdown-menu-item:hover {
@@ -132,14 +127,12 @@ input:focus {
   border-color: #66bb6a;
 }
 
-/* Subtotal Styles */
 .subtotal {
   margin-top: 20px;
   font-weight: bold;
   color: #388e3c;
 }
 
-/* Table Styles */
 .cost-table {
   width: 100%;
   margin-top: 20px;
