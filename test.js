@@ -1,24 +1,19 @@
 import React from 'react';
-import './ValuesContainer.css';
+import Navbar from './Navbar';
+import InputContainer from './InputContainer';
+import ValuesContainer from './ValuesContainer';
+import './MainApp.css';
 
-function ValuesContainer() {
+function MainApp() {
   return (
-    <div className="values-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Value 1</th>
-            <th>Value 2</th>
-            <th>Value 3</th>
-            <th>Value 4</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* API data will be populated here */}
-        </tbody>
-      </table>
+    <div className="MainApp">
+      <Navbar />
+      <div className="container">
+        <InputContainer />
+        <ValuesContainer />
+      </div>
     </div>
   );
 }
 
-export default ValuesContainer;
+export default MainApp;
