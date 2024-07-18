@@ -1,19 +1,16 @@
 import React from 'react';
-import Navbar from './Navbar';
-import InputContainer from './InputContainer';
-import ValuesContainer from './ValuesContainer';
-import './MainApp.css';
+import { Link } from 'react-router-dom';
+import './Home.css';
 
-function MainApp() {
+function Home() {
   return (
-    <div className="MainApp">
-      <Navbar />
-      <div className="container">
-        <InputContainer />
-        <ValuesContainer />
-      </div>
+    <div className="home">
+      <h1>Welcome to the Home Page</h1>
+      <Link to="/app">
+        <button>Go to App</button>
+      </Link>
     </div>
   );
 }
 
-export default MainApp;
+export default Home;
