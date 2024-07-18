@@ -1,12 +1,41 @@
-/* General styles for MainApp */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Navigation bar styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  padding: 20px 40px;
 }
 
-.container {
-    display: flex;
-    padding: 20px;
+.navbar .logo {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.navbar .nav-middle {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.navbar .nav-middle .nav-image {
+  height: 50px; /* Set the height of the image */
+  width: auto;  /* Maintain the aspect ratio */
+}
+
+.navbar .nav-buttons {
+  display: flex;
+  gap: 20px; /* Add space between buttons */
+}
+
+.navbar .nav-buttons button {
+  background-color: #444;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  cursor: pointer;
+}
+
+.navbar .nav-buttons button:hover {
+  background-color: #555;
 }
