@@ -1,36 +1,12 @@
-/* Dropdown styles */
-.form-group {
-    margin-bottom: 15px;
-    position: relative;
-    display: grid;
-    grid-template-columns: 4fr 1fr auto; /* 4 parts for label, 1 part for input, auto for info button */
-    align-items: center;
-  }
-  
-  .form-group label {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-weight: bold;
-    margin-right: 10px; /* Space between label and input */
-  }
-  
-  .form-group .input-wrapper {
-    display: flex;
-    align-items: center;
-  }
-  
-  .form-group select {
-    flex-grow: 1; /* Allow select to grow */
-    min-width: 150px; /* Set minimum width for select */
-    max-width: 200px; /* Set maximum width for select */
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px; /* Space between select and info button */
-  }
-  
-  .form-group .info-button-container {
-    margin-left: 0;
-  }
-  
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  padding: 20px;
+}
