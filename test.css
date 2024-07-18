@@ -1,159 +1,39 @@
-body {
-  font-family: Arial, sans-serif;
+.info-button-container {
+  position: relative;
+  display: inline-block;
 }
 
-.banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center; /* Align items vertically in the center */
-  padding: 10px 20px;
-  background-color: #388e3c;
+.info-button {
+  background-color: #007bff;
   color: white;
-}
-
-.logo {
-  display: flex;
-  align-items: center; /* Align logo vertically */
-}
-
-.logo img {
-  height: 50px; /* Adjust as needed */
-}
-
-.button-container {
-  display: flex;
-  align-items: center; /* Ensure buttons are aligned vertically with the logo */
-}
-
-.button {
-  margin: 0 10px;
-  padding: 10px 20px;
-  background-color: #66bb6a;
-  color: white;
-  cursor: pointer;
-  border-radius: 5px;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
   text-align: center;
-  display: flex;
-  align-items: center; /* Ensure text inside buttons is centered vertically */
-  height: 50px; /* Adjust to match logo height if needed */
-}
-
-.button:hover {
-  background-color: #81c784;
-}
-
-.App {
-  text-align: center;
-}
-
-.app-container {
-  background-color: #e8f5e9;
-  padding: 20px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 20px auto; /* Adjusted margin for spacing */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-  color: #388e3c;
-  margin-bottom: 20px;
-}
-
-.input-section {
-  display: flex;
-  justify-content: space-between; /* Ensure space between input fields and detailed costs */
-}
-
-.input-fields,
-.details-box {
-  flex: 1; /* Ensure both input fields and detailed costs take up equal space */
-  margin-right: 20px; /* Add space between input fields and detailed costs */
-}
-
-.input-container,
-.dropdown-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.dropdown-label,
-.input-label {
-  flex: 1;
-  text-align: left;
-  font-weight: bold;
-  color: #2e7d32;
-}
-
-.dropdown-button,
-.input-field {
-  flex: 2;
-  padding: 5px;
-  border: 1px solid #2e7d32;
-  border-radius: 5px;
-  outline: none;
-}
-
-.dropdown-button {
-  background-color: #81c784;
-  color: white;
   cursor: pointer;
 }
 
-.dropdown-menu {
+.info-button:hover {
+  background-color: #0056b3;
+}
+
+.info-box {
   position: absolute;
-  background-color: #ffffff;
-  border: 1px solid #2e7d32;
-  border-radius: 5px;
-  margin-top: 5px;
-  list-style-type: none;
-  padding: 0;
-  width: auto; /* Ensure the width is auto */
-  min-width: 100%; /* Ensures it is at least as wide as the button */
-  z-index: 1000;
-}
-
-.dropdown-menu-item {
+  top: 30px;
+  left: 0;
+  width: 200px;
   padding: 10px;
-  cursor: pointer;
-  white-space: nowrap; /* Prevent text from wrapping */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  overflow-y: auto;
+  max-height: 100px;
 }
 
-.dropdown-menu-item:hover {
-  background-color: #a5d6a7;
-}
-
-.input-field {
-  background-color: #ffffff;
-}
-
-button:focus,
-input:focus {
-  border-color: #66bb6a;
-}
-
-.subtotal {
-  margin-top: 20px;
-  font-weight: bold;
-  color: #388e3c;
-}
-
-.cost-table {
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-}
-
-.cost-table th,
-.cost-table td {
-  border: 1px solid #2e7d32;
-  padding: 10px;
-  text-align: center;
-}
-
-.cost-table th {
-  background-color: #81c784;
-  color: white;
+.info-content {
+  font-size: 14px;
+  color: #333;
 }
