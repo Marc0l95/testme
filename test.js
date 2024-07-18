@@ -1,16 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import './Home.css';
+import InfoButton from './InfoButton';
+import './Dropdown.css';
 
-function Home() {
+function Dropdown({ label, infoText, options, id }) {
   return (
-    <div className="home">
-      <h1>Welcome to the Home Page</h1>
-      <Link to="/app">
-        <button>Go to App</button>
-      </Link>
+    <div className="form-group">
+      <label htmlFor={id}>{label}</label>
+      <div className="input-wrapper">
+        <select id={id}>
+          {options.map((option, index) => (
+            <option key={index} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+        <div className="info-button-container">
+          <InfoButton text={infoText} />
+        </div>
+      </div>
     </div>
   );
 }
 
-export default Home;
+export default Dropdown;
