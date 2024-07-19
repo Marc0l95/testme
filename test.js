@@ -34,8 +34,8 @@ function InfoButton({ text }) {
       <button type="button" className="info-button" onClick={handleToggle}>i</button>
       {isVisible && (
         <div className="info-box">
+          <button className="close-button" onClick={handleClose}>×</button>
           <div className="info-content">
-            <button className="close-button" onClick={handleClose}>×</button>
             {text}
           </div>
         </div>
