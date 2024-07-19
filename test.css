@@ -1,41 +1,39 @@
-/* Navigation bar styles */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
-  color: white;
-  padding: 20px 40px;
+/* Input container styles */
+.input-container {
+  flex: 1;
+  margin-right: 20px;
 }
 
-.navbar .logo {
-  font-size: 2em;
+.form-group {
+  margin-bottom: 15px;
+  position: relative;
+  display: flex;
+  align-items: center; /* Align items horizontally */
+}
+
+.form-group label {
+  width: 200px; /* Fixed width for labels */
+  margin-right: 10px; /* Space between label and input */
   font-weight: bold;
+  white-space: nowrap; /* Prevent label text from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis for overflowing text */
 }
 
-.navbar .nav-middle {
-  flex-grow: 1;
-  text-align: center;
-}
-
-.navbar .nav-middle .nav-image {
-  height: 50px; /* Set the height of the image */
-  width: auto;  /* Maintain the aspect ratio */
-}
-
-.navbar .nav-buttons {
+.form-group .input-wrapper {
   display: flex;
-  gap: 20px; /* Add space between buttons */
+  align-items: center;
 }
 
-.navbar .nav-buttons button {
-  background-color: #444;
-  color: white;
-  border: none;
-  padding: 15px 20px;
-  cursor: pointer;
+.form-group input,
+.form-group select {
+  width: 100%; /* Ensure input/select takes the remaining space */
+  max-width: 200px; /* Set maximum width for input and select */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.navbar .nav-buttons button:hover {
-  background-color: #555;
+.form-group .info-button-container {
+  margin-left: 10px; /* Space between input/select and info button */
 }
