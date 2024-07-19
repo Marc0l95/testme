@@ -1,52 +1,41 @@
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
+.MainApp {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  z-index: 1000;
-  box-sizing: border-box;
+  flex-direction: column;
+  height: 100vh;
 }
 
-.navbar .logo-container {
+.container {
   display: flex;
-  align-items: center;
+  flex: 1;
+  padding-top: 70px; /* Adjust padding to match the navbar height */
+  overflow: hidden;
 }
 
-.navbar .logo-image {
-  height: 50px;
-  width: auto;
-  object-fit: cover;
+.input-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+  position: relative; /* Ensure positioned context for popups */
 }
 
-.navbar .nav-middle {
-  flex-grow: 1;
-  text-align: center;
+.values-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  position: relative; /* Ensure positioned context for popups */
+  height: calc(100vh - 70px); /* Adjust height to account for the fixed navbar */
 }
 
-.navbar .nav-middle .nav-image {
-  height: 50px;
-  width: auto;
-}
-
-.navbar .nav-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.navbar .nav-buttons button {
-  background-color: #444;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-}
-
-.navbar .nav-buttons button:hover {
-  background-color: #555;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding-top: 120px;
+  }
+  
+  .input-container, .values-container {
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
 }
