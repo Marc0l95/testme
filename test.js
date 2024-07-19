@@ -1,23 +1,47 @@
-import React from 'react';
-import InfoButton from './InfoButton';
-import './Dropdown.css';
+import React, { useState, useEffect } from 'react';
+import './InfoButton.css';
 
-function Dropdown({ label, infoText, options, id, value, onChange }) {
+function InfoButton({ text }) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleToggle = (e) => {
+    e.stopPropagation();
+    setIsVisible(!isVisible);
+  };
+
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setIsVisible(false);
+    };
+
+    if (isVisible) {
+      document.addEventListener('click', handleClickOutside);
+    } else {
+      document.removeEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isVisible]);
+
   return (
-    <div className="form-group">
-      <label htmlFor={id}>{label}</label>
-      <div className="input-wrapper">
-        <select id={id} value={value} onChange={onChange}>
-          {options.map((option, index) => (
-            <option key={index} value={option.value}>{option.label}</option>
-          ))}
-        </select>
-        <div className="info-button-container">
-          <InfoButton text={infoText} />
+    <div className="info-button-container">
+      <button type="button" className="info-button" onClick={handleToggle}>i</button>
+      {isVisible && (
+        <div className="info-box">
+          <div className="info-content">
+            <button className="close-button" onClick={handleClose}>×</button>
+            {text}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-export default Dropdown;
+export default InfoButton;
