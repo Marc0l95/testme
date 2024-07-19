@@ -1,50 +1,24 @@
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
+.MainApp {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
-  color: white;
-  padding: 20px 40px;
-  z-index: 1000;
+  flex-direction: column;
+  height: 100vh;
 }
 
-.navbar .logo-container {
+.container {
   display: flex;
-  align-items: center;
+  flex: 1;
+  padding-top: 100px; /* Height of the navbar to offset */
 }
 
-.navbar .logo-image {
-  height: 50px; /* Adjust as needed */
-  width: auto;
-  object-fit: cover; /* Ensures the image covers the specified dimensions */
+.input-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  border-right: 1px solid #ddd; /* Optional: add a border to separate */
 }
 
-.navbar .nav-middle {
-  flex-grow: 1;
-  text-align: center;
-}
-
-.navbar .nav-middle .nav-image {
-  height: 50px; /* Set the height of the image */
-  width: auto;  /* Maintain the aspect ratio */
-}
-
-.navbar .nav-buttons {
-  display: flex;
-  gap: 20px; /* Add space between buttons */
-}
-
-.navbar .nav-buttons button {
-  background-color: #444;
-  color: white;
-  border: none;
-  padding: 15px 20px;
-  cursor: pointer;
-}
-
-.navbar .nav-buttons button:hover {
-  background-color: #555;
+.values-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
 }
