@@ -1,24 +1,52 @@
-.MainApp {
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  height: 100vh;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  padding: 10px 20px; /* Adjust padding to fit the content */
+  z-index: 1000;
+  box-sizing: border-box; /* Ensure padding is included in the total width */
 }
 
-.container {
+.navbar .logo-container {
   display: flex;
-  flex: 1;
-  padding-top: 100px; /* Height of the navbar to offset */
+  align-items: center;
 }
 
-.input-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  border-right: 1px solid #ddd; /* Optional: add a border to separate */
+.navbar .logo-image {
+  height: 50px; /* Adjust as needed */
+  width: auto;
+  object-fit: cover; /* Ensures the image covers the specified dimensions */
 }
 
-.values-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
+.navbar .nav-middle {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.navbar .nav-middle .nav-image {
+  height: 50px; /* Set the height of the image */
+  width: auto;  /* Maintain the aspect ratio */
+}
+
+.navbar .nav-buttons {
+  display: flex;
+  gap: 10px; /* Reduce gap to fit content */
+  flex-wrap: wrap; /* Allow buttons to wrap to the next line if needed */
+}
+
+.navbar .nav-buttons button {
+  background-color: #444;
+  color: white;
+  border: none;
+  padding: 10px 15px; /* Adjust padding to fit the content */
+  cursor: pointer;
+}
+
+.navbar .nav-buttons button:hover {
+  background-color: #555;
 }
