@@ -38,7 +38,7 @@ function ValuesContainer({ data }) {
         <tbody>
           {rows.map((row, index) => (
             <React.Fragment key={index}>
-              {row.totals.map((total, idx) => (
+              {row.tTotals.map((total, idx) => (
                 <tr key={idx}>
                   {idx === 0 && <td rowSpan={row.totals.length}>{row.name}</td>}
                   <td>{total.key}</td>
@@ -52,23 +52,9 @@ function ValuesContainer({ data }) {
     );
   };
 
-  // Example subtotals and overall total
-  const subtotal1 = data ? data.product1.calc1 + data.product1.calc2 : 0;
-  const subtotal2 = data ? data.product2.calc1 + data.product2.calc2 : 0;
-  const overallTotal = subtotal1 + subtotal2;
-
   return (
     <div className="values-container">
       <h2>Summary</h2>
-      <div className="subtotal">
-        <h3>Subtotal 1: {subtotal1}</h3>
-      </div>
-      <div className="subtotal">
-        <h3>Subtotal 2: {subtotal2}</h3>
-      </div>
-      <div className="overall-total">
-        <h3>Overall Total: {overallTotal}</h3>
-      </div>
       {renderTableData(data)}
       <InfoBox title="Info 1" content="This is an example info box with some text." />
       <InfoBox title="Info 2" content="Another info box with more information." />
