@@ -8,19 +8,17 @@ function ValuesContainer({ data }) {
 
     if (data) {
       Object.keys(data).forEach((product) => {
-        const productData = data[product];
-        const row = {
-          name: productData.name,
-          totals: [],
-        };
+        if (product.startsWith('total_')) {
+          const productData = data[product];
+          const row = {
+            name: product,
+            totals: [],
+          };
 
-        Object.keys(productData).forEach((key) => {
-          if (key.startsWith('total_')) {
+          Object.keys(productData).forEach((key) => {
             row.totals.push({ key, value: productData[key] });
-          }
-        });
+          });
 
-        if (row.totals.length > 0) {
           rows.push(row);
         }
       });
@@ -38,7 +36,7 @@ function ValuesContainer({ data }) {
         <tbody>
           {rows.map((row, index) => (
             <React.Fragment key={index}>
-              {row.tTotals.map((total, idx) => (
+              {row.totals.map((total, idx) => (
                 <tr key={idx}>
                   {idx === 0 && <td rowSpan={row.totals.length}>{row.name}</td>}
                   <td>{total.key}</td>
