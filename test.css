@@ -1,52 +1,15 @@
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  z-index: 1000;
-  box-sizing: border-box;
+.info-box {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+  border-radius: 4px;
 }
 
-.navbar .logo-container {
-  display: flex;
-  align-items: center;
+.info-box h3 {
+  margin-top: 0;
 }
 
-.navbar .logo-image {
-  height: 50px;
-  width: auto;
-  object-fit: cover;
-}
-
-.navbar .nav-middle {
-  flex-grow: 1;
-  text-align: center;
-}
-
-.navbar .nav-middle .nav-image {
-  height: 50px;
-  width: auto;
-}
-
-.navbar .nav-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.navbar .nav-buttons button {
-  background-color: #444;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-}
-
-.navbar .nav-buttons button:hover {
-  background-color: #555;
+.info-content {
+  margin-top: 10px;
 }
