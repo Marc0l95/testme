@@ -1,6 +1,6 @@
- return (
+  return (
     <div className="MainApp">
-      <Navbar resetInputs={resetInputs} showDetailedCalculations={() => setShowDetailedCalculations(true)} />
+      <Navbar resetInputs={resetInputs} toggleDetailedCalculations={toggleDetailedCalculations} />
       {showDetailedCalculations ? (
         <DetailedCalculations data={result} />
       ) : (
