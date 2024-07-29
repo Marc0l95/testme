@@ -1,52 +1,25 @@
-import React from 'react';
-import './DetailedCalculations.css';
-
-function DetailedCalculations({ data }) {
-  // Assuming `data` is passed down from a parent component or fetched from an API
-  // Here, just a static example
-  const exampleData = {
-    product1: [
-      { cost1: 4.00, description: "Input1 + Input2 + Dropdown1" },
-      { cost2: 6.00, description: "Input1 - Input2 + Dropdown2" }
-    ],
-    product2: [
-      { cost3: 12.00, description: "Input1 * Input2 * Dropdown3" },
-      { cost4: 15.00, description: "(Input1 + Input2) / (Dropdown1 + 1)" }
-    ]
-  };
-
-  const renderTableData = (data) => {
-    return Object.keys(data).map((product, index) => (
-      <div key={index}>
-        <h3>{product}</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Cost</th>
-              <th>Value</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data[product].map((item, idx) => (
-              <tr key={idx}>
-                {Object.keys(item).map((key, i) => (
-                  <td key={i}>{item[key]}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    ));
-  };
-
-  return (
-    <div className="detailed-calculations">
-      <h2>Detailed Calculations Breakdown</h2>
-      {renderTableData(exampleData)}
+ return (
+    <div className="MainApp">
+      <Navbar resetInputs={resetInputs} showDetailedCalculations={() => setShowDetailedCalculations(true)} />
+      {showDetailedCalculations ? (
+        <DetailedCalculations data={result} />
+      ) : (
+        <div className="container">
+          <div className="input-container">
+            <InputContainer
+              input1={input1} setInput1={setInput1}
+              input2={input2} setInput2={setInput2}
+              dropdown1={dropdown1} setDropdown1={setDropdown1}
+              dropdown2={dropdown2} setDropdown2={setDropdown2}
+              dropdown3={dropdown3} setDropdown3={setDropdown3}
+              resetInputs={resetInputs}
+            />
+          </div>
+          <div className="values-container">
+            {result && <ValuesContainer data={result} />}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-export default DetailedCalculations;
