@@ -1,49 +1,18 @@
-.values-container {
-  padding: 20px;
-  background-color: #f9f9f9;
-  font-family: Arial, sans-serif;
+.toggle-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
-.values-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
+.toggle-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.values-container .subtotal,
-.values-container .overall-total {
-  margin-bottom: 20px;
-}
-
-.values-container table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-  background-color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.values-container th,
-.values-container td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-}
-
-.values-container th {
-  background-color: #f2f2f2;
-  color: #333;
-  font-weight: bold;
-}
-
-.values-container td {
-  color: #666;
-}
-
-.values-container tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.values-container tr:hover {
-  background-color: #f1f1f1;
+.toggle-button:hover {
+  background-color: #0056b3;
 }
