@@ -6,38 +6,36 @@ function DetailedCalculations({ data }) {
   const renderTableData = (data) => {
     if (!data) return null;
 
-    return Object.keys(data).map((category, index) => (
-      <div key={index}>
+    return Object.keys(data).map((category, categoryIndex) => (
+      <div key={categoryIndex}>
         <h2 className="category-header">{category}</h2>
-        {Object.keys(data[category]).map((product, productIndex) => {
-          const productData = data[category][product];
-          return (
-            <div key={productIndex}>
-              <h3>{product}</h3> {/* Product Heading */}
-              <table>
-                <thead>
-                  <tr>
-                    <th>Detail Key</th>
-                    <th>Detail Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(productData).map(([key, value], idx) => {
-                    if (value !== undefined && value !== null && value !== '') {
-                      return (
-                        <tr key={idx}>
-                          <td>{key}</td>
-                          <td>£{formatToTwoDecimals(value)}</td>
-                        </tr>
-                      );
-                    }
-                    return null; // Do not render if value is empty
-                  })}
-                </tbody>
-              </table>
-            </div>
-          );
-        })}
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Cost 1</th>
+              <th>Cost 2</th>
+              <th>Cost 3</th>
+              <th>Detail 1</th>
+              <th>Detail 2</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(data[category]).map((product, productIndex) => {
+              const productData = data[category][product];
+              return (
+                <tr key={productIndex}>
+                  <td>{product}</td>
+                  <td>{productData.cost1 !== undefined && productData.cost1 !== null ? `£${formatToTwoDecimals(productData.cost1)}` : ''}</td>
+                  <td>{productData.cost2 !== undefined && productData.cost2 !== null ? `£${formatToTwoDecimals(productData.cost2)}` : ''}</td>
+                  <td>{productData.cost3 !== undefined && productData.cost3 !== null ? `£${formatToTwoDecimals(productData.cost3)}` : ''}</td>
+                  <td>{productData.detail1 !== undefined && productData.detail1 !== null ? `£${formatToTwoDecimals(productData.detail1)}` : ''}</td>
+                  <td>{productData.detail2 !== undefined && productData.detail2 !== null ? `£${formatToTwoDecimals(productData.detail2)}` : ''}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     ));
   };
