@@ -1,61 +1,68 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatToTwoDecimals } from './utils';
-import './DetailedCalculations.css';
+import './ValuesContainer.css';
 
-function DetailedCalculations({ data }) {
-  // Define the order of the categories explicitly
-  const categoryOrder = ['compute', 'storage'];
+function ValuesContainer({ data }) {
+  const navigate = useNavigate();
 
   const renderTableData = (data) => {
     if (!data) return null;
 
-    return categoryOrder.map((category, categoryIndex) => {
-      // Skip categories not present in the data
-      if (!data[category]) return null;
+    return Object.keys(data).map((category, categoryIndex) => (
+      <div key={categoryIndex}>
+        <h2 className="category-header">{category}</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Total Cost 1</th>
+              <th>Total Cost 2</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(data[category]).map((product, productIndex) => {
+              const productData = data[category][product];
+              // Check if all values are 0.0 or undefined
+              const hasNonZeroValue = ['total_cost1', 'total_cost2'].some(
+                (key) => productData[key] !== undefined && productData[key] !== 0.0
+              );
 
-      return (
-        <div key={categoryIndex}>
-          <h2 className="category-header">{category}</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Cost 1</th>
-                <th>Cost 2</th>
-                <th>Cost 3</th>
-                <th>Detail 1</th>
-                <th>Detail 2</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.keys(data[category]).map((product, productIndex) => {
-                const productData = data[category][product];
-                return (
-                  <tr key={productIndex}>
-                    <td>{product}</td>
-                    {['cost1', 'cost2', 'cost3', 'detail1', 'detail2'].map((key, idx) => {
-                      const value = productData[key];
-                      if (value !== undefined && value !== null && value !== 0.0) {
-                        return <td key={idx}>{`£${formatToTwoDecimals(value)}`}</td>;
-                      }
-                      return <td key={idx}></td>; // Render an empty cell for 0.0 values
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      );
-    });
+              if (!hasNonZeroValue) {
+                return null; // Do not render the row if all values are 0.0 or undefined
+              }
+
+              return (
+                <tr key={productIndex}>
+                  <td>{product}</td>
+                  {['total_cost1', 'total_cost2'].map((key, idx) => {
+                    const value = productData[key];
+                    return (
+                      <td key={idx}>
+                        {value !== undefined && value !== 0.0 ? `£${formatToTwoDecimals(value)}` : ''}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    ));
   };
 
   return (
-    <div className="detailed-calculations">
-      <h1>Detailed Calculations Breakdown</h1>
+    <div className="values-container">
+      <div className="toggle-container">
+        <button onClick={() => navigate('/app')} className="toggle-button">
+          Back to Calculator
+        </button>
+      </div>
+      <h1>Totals Summary</h1>
       {renderTableData(data)}
     </div>
   );
 }
 
-export default DetailedCalculations;
+export default ValuesContainer;
