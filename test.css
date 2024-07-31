@@ -1,18 +1,55 @@
-.toggle-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.detailed-calculations {
+  padding: 20px;
 }
 
-.toggle-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+.detailed-calculations h1 {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.toggle-button:hover {
-  background-color: #0056b3;
+.category-header {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  color: #007bff;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.detailed-calculations h3 {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.detailed-calculations table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.detailed-calculations th,
+.detailed-calculations td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.detailed-calculations th {
+  background-color: #f2f2f2;
+  color: #333;
+  font-weight: bold;
+}
+
+.detailed-calculations td {
+  color: #666;
+}
+
+.detailed-calculations tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.detailed-calculations tr:hover {
+  background-color: #f1f1f1;
 }
