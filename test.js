@@ -1,78 +1,86 @@
-import React, { useEffect, useState } from 'react';
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import axios from 'axios';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { formatToTwoDecimals } from './utils';
+import './ValuesContainer.css';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+function ValuesContainer({ data }) {
+  const navigate = useNavigate();
 
-function DonutChart() {
-  const [chartData, setChartData] = useState(null);
+  // Define the desired order of categories explicitly
+  const categoryOrder = ['compute', 'storage'];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/donut-data');
-        setChartData(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  const renderTableData = (data) => {
+    if (!data) return null;
 
-    fetchData(); // Initial fetch
+    return categoryOrder.map((category, categoryIndex) => {
+      const categoryData = data?.[category];
+      if (!categoryData) return null; // Skip categories not present in the data
 
-    const intervalId = setInterval(fetchData, 60000); // Poll every 60 seconds
+      // Track whether any product in this category has a non-zero value
+      let hasNonZeroProduct = false;
 
-    return () => clearInterval(intervalId); // Cleanup on unmount
-  }, []);
+      const products = Object.keys(categoryData)
+        .filter(product => product.startsWith('total')) // Filter for products starting with 'total'
+        .map((product, productIndex) => {
+          const productData = categoryData?.[product];
+          if (!productData) return null; // Skip products not present in the data
 
-  if (!chartData) {
-    return <div>Loading...</div>;
-  }
+          // Check if the product has any non-zero value
+          const hasNonZeroValue = Object.values(productData).some(value => value !== 0.0);
+          if (!hasNonZeroValue) return null; // Skip rendering this product if all values are zero
 
-  const data = {
-    labels: chartData.labels,
-    datasets: [
-      {
-        label: 'Totals',
-        data: chartData.values,
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-        ],
-        borderWidth: 1,
-      },
-    ],
+          // Mark that we have at least one non-zero product
+          hasNonZeroProduct = true;
+
+          return (
+            <tr key={productIndex}>
+              <td className="product-name">{product}</td> {/* Bold product name */}
+              {Object.keys(productData).map((key, idx) => {
+                const value = productData[key];
+                return (
+                  <td key={idx}>
+                    {value !== undefined && value !== 0.0 ? `£${formatToTwoDecimals(value)}` : ''}
+                  </td>
+                );
+              })}
+            </tr>
+          );
+        });
+
+      if (!hasNonZeroProduct) return null; // Skip this category if no products have non-zero values
+
+      return (
+        <div key={categoryIndex}>
+          <h2 className="category-header">{category}</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Total Cost 1</th>
+                <th>Total Cost 2</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products}
+            </tbody>
+          </table>
+        </div>
+      );
+    });
   };
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            return tooltipItem.label + ': ' + tooltipItem.raw;
-          },
-        },
-      },
-    },
-  };
-
-  return <Doughnut data={data} options={options} />;
+  return (
+    <div className="values-container">
+      <div className="spacer"></div> {/* Spacer element */}
+      <div className="toggle-container">
+        <button onClick={() => navigate('/app')} className="toggle-button">
+          Back to Calculator
+        </button>
+      </div>
+      <h1>Totals Summary</h1>
+      {renderTableData(data)}
+    </div>
+  );
 }
 
-export default DonutChart;
+export default ValuesContainer;
