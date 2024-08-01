@@ -1,79 +1,54 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { formatToTwoDecimals } from './utils';
-import './ValuesContainer.css';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
-function ValuesContainer({ data }) {
-  const navigate = useNavigate();
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-  // Define the desired order of categories explicitly
-  const categoryOrder = ['compute', 'storage'];
-
-  const renderTableData = (data) => {
-    if (!data) return null;
-
-    return categoryOrder.map((category, categoryIndex) => {
-      if (!data[category]) return null; // Skip categories not present in the data
-
-      return (
-        <div key={categoryIndex}>
-          <h2 className="category-header">{category}</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Total Cost 1</th>
-                <th>Total Cost 2</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.keys(data[category])
-                .filter(product => product.startsWith('total')) // Filter for products starting with 'total'
-                .map((product, productIndex) => {
-                  const productData = data[category][product];
-                  if (!productData) return null; // Skip products not present in the data
-
-                  const hasNonZeroValue = ['total_cost1', 'total_cost2'].some(
-                    (key) => productData[key] !== undefined && productData[key] !== 0.0
-                  );
-
-                  if (!hasNonZeroValue) {
-                    return null; // Do not render the row if all values are 0.0 or undefined
-                  }
-
-                  return (
-                    <tr key={productIndex}>
-                      <td>{product}</td>
-                      {['total_cost1', 'total_cost2'].map((key, idx) => {
-                        const value = productData[key];
-                        return (
-                          <td key={idx}>
-                            {value !== undefined && value !== 0.0 ? `£${formatToTwoDecimals(value)}` : ''}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </div>
-      );
-    });
+function DonutChart({ data }) {
+  const chartData = {
+    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], // Example labels
+    datasets: [
+      {
+        label: '# of Votes',
+        data: data, // Data array
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
   };
 
-  return (
-    <div className="values-container">
-      <div className="spacer"></div> {/* Spacer element */}
-      <div className="toggle-container">
-        <button onClick={() => navigate('/app')} className="toggle-button">
-          Back to Calculator
-        </button>
-      </div>
-      <h1>Totals Summary</h1>
-      {renderTableData(data)}
-    </div>
-  );
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            return tooltipItem.label + ': ' + tooltipItem.raw;
+          },
+        },
+      },
+    },
+  };
+
+  return <Doughnut data={chartData} options={options} />;
 }
 
-export default ValuesContainer;
+export default DonutChart;
