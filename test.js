@@ -16,7 +16,7 @@ function ValuesContainer({ data }) {
       const categoryData = data?.[category];
       if (!categoryData) return null; // Skip categories not present in the data
 
-      // Track whether any product in this category has a non-zero value
+      // Track whether any product in this category has a non-zero value for the relevant costs
       let hasNonZeroProduct = false;
 
       const products = Object.keys(categoryData)
@@ -25,8 +25,8 @@ function ValuesContainer({ data }) {
           const productData = categoryData?.[product];
           if (!productData) return null; // Skip products not present in the data
 
-          // Check if the product has any non-zero value
-          const hasNonZeroValue = Object.values(productData).some(value => value !== 0.0);
+          // Check if the product has any non-zero value for Total Cost 1 and Total Cost 2
+          const hasNonZeroValue = Object.keys(productData).some(key => key.includes('total_cost') && productData[key] !== 0.0);
           if (!hasNonZeroValue) return null; // Skip rendering this product if all values are zero
 
           // Mark that we have at least one non-zero product
@@ -36,12 +36,15 @@ function ValuesContainer({ data }) {
             <tr key={productIndex}>
               <td className="product-name">{product}</td> {/* Bold product name */}
               {Object.keys(productData).map((key, idx) => {
-                const value = productData[key];
-                return (
-                  <td key={idx}>
-                    {value !== undefined && value !== 0.0 ? `£${formatToTwoDecimals(value)}` : ''}
-                  </td>
-                );
+                if (key.includes('total_cost')) { // Only show total_cost columns
+                  const value = productData[key];
+                  return (
+                    <td key={idx}>
+                      {value !== undefined && value !== 0.0 ? `£${formatToTwoDecimals(value)}` : ''}
+                    </td>
+                  );
+                }
+                return null;
               })}
             </tr>
           );
