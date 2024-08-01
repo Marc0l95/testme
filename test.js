@@ -6,11 +6,11 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 function DonutChart({ data }) {
   const chartData = {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], // Example labels
+    labels: Object.keys(data),
     datasets: [
       {
-        label: '# of Votes',
-        data: data, // Data array
+        label: 'Totals',
+        data: Object.values(data),
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
