@@ -13,7 +13,7 @@ function ValuesContainer({ data }) {
     if (!data) return null;
 
     return categoryOrder.map((category, categoryIndex) => {
-      const categoryData = data?.[category];
+      const categoryData = data[category];
       if (!categoryData) return null; // Skip categories not present in the data
 
       // Track whether any product in this category has a non-zero value for the relevant costs
@@ -22,11 +22,11 @@ function ValuesContainer({ data }) {
       const products = Object.keys(categoryData)
         .filter(product => product.startsWith('total')) // Filter for products starting with 'total'
         .map((product, productIndex) => {
-          const productData = categoryData?.[product];
+          const productData = categoryData[product];
           if (!productData) return null; // Skip products not present in the data
 
-          // Check if the product has any non-zero value for Total Cost 1 and Total Cost 2
-          const hasNonZeroValue = Object.keys(productData).some(key => key.includes('total_cost') && productData[key] !== 0.0);
+          // Check if the product has any non-zero value for the relevant costs
+          const hasNonZeroValue = Object.keys(productData).some(key => productData[key] !== 0);
           if (!hasNonZeroValue) return null; // Skip rendering this product if all values are zero
 
           // Mark that we have at least one non-zero product
@@ -36,15 +36,12 @@ function ValuesContainer({ data }) {
             <tr key={productIndex}>
               <td className="product-name">{product}</td> {/* Bold product name */}
               {Object.keys(productData).map((key, idx) => {
-                if (key.includes('total_cost')) { // Only show total_cost columns
-                  const value = productData[key];
-                  return (
-                    <td key={idx}>
-                      {value !== undefined && value !== 0.0 ? `£${formatToTwoDecimals(value)}` : ''}
-                    </td>
-                  );
-                }
-                return null;
+                const value = productData[key];
+                return (
+                  <td key={idx}>
+                    {value !== undefined && value !== 0.0 ? `£${formatToTwoDecimals(value)}` : ''}
+                  </td>
+                );
               })}
             </tr>
           );
@@ -61,6 +58,7 @@ function ValuesContainer({ data }) {
                 <th>Product</th>
                 <th>Total Cost 1</th>
                 <th>Total Cost 2</th>
+                {/* Add more headers if necessary */}
               </tr>
             </thead>
             <tbody>
