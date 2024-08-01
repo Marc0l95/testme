@@ -1,87 +1,69 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { formatToTwoDecimals } from './utils';
-import './ValuesContainer.css';
+const DynamicTable = ({ data }) => {
+  const flattenData = (obj, prefix = '') => {
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      if (typeof value === 'object' && value !== null) {
+        return { ...acc, ...flattenData(value, `${prefix}${key}.`) };
+      }
+      return { ...acc, [`${prefix}${key}`]: value };
+    }, {});
+  };
 
-function ValuesContainer({ data }) {
-  const navigate = useNavigate();
+  const filteredData = Object.entries(flattenData(data))
+    .filter(([key]) => key.startsWith('total'))
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 
-  // Define the desired order of categories explicitly
-  const categoryOrder = ['compute', 'storage'];
+  const groupedData = Object.entries(filteredData).reduce((acc, [key, value]) => {
+    const [category, product, metric] = key.split('.');
+    if (!acc[product]) acc[product] = {};
+    acc[product][metric] = value;
+    return acc;
+  }, {});
 
-  const renderTableData = (data) => {
-    if (!data) return null;
+  const nonZeroProducts = Object.entries(groupedData).filter(([_, values]) => 
+    Object.values(values).some(value => value !== 0)
+  );
 
-    return categoryOrder.map((category, categoryIndex) => {
-      const categoryData = data[category];
-      if (!categoryData) return null; // Skip categories not present in the data
+  if (nonZeroProducts.length === 0) return null;
 
-      // Track whether any product in this category has a non-zero value for the relevant costs
-      let hasNonZeroProduct = false;
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Total Cost 1</th>
+          <th>Total Cost 2</th>
+        </tr>
+      </thead>
+      <tbody>
+        {nonZeroProducts.map(([product, values]) => (
+          <tr key={product}>
+            <td>{product}</td>
+            <td>{values.total_cost1}</td>
+            <td>{values.total_cost2}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
-      const products = Object.keys(categoryData)
-        .filter(product => product.startsWith('total')) // Filter for products starting with 'total'
-        .map((product, productIndex) => {
-          const productData = categoryData[product];
-          if (!productData) return null; // Skip products not present in the data
-
-          // Check if the product has any non-zero value for the relevant costs
-          const hasNonZeroValue = Object.keys(productData).some(key => productData[key] !== 0);
-          if (!hasNonZeroValue) return null; // Skip rendering this product if all values are zero
-
-          // Mark that we have at least one non-zero product
-          hasNonZeroProduct = true;
-
-          return (
-            <tr key={productIndex}>
-              <td className="product-name">{product}</td> {/* Bold product name */}
-              {Object.keys(productData).map((key, idx) => {
-                const value = productData[key];
-                return (
-                  <td key={idx}>
-                    {value !== undefined && value !== 0.0 ? `£${formatToTwoDecimals(value)}` : ''}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        });
-
-      if (!hasNonZeroProduct) return null; // Skip this category if no products have non-zero values
-
-      return (
-        <div key={categoryIndex}>
-          <h2 className="category-header">{category}</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Total Cost 1</th>
-                <th>Total Cost 2</th>
-                {/* Add more headers if necessary */}
-              </tr>
-            </thead>
-            <tbody>
-              {products}
-            </tbody>
-          </table>
-        </div>
-      );
-    });
+// Usage
+const App = () => {
+  const jsonData = {
+    "compute": {
+      "total_product1": { "total_cost1": 120.0, "total_cost2": 110.0, "other_metric": 50.0 },
+      "total_product2": { "total_cost1": 0.0, "total_cost2": 0.0, "other_metric": 0.0 }
+    },
+    "storage": {
+      "total_product3": { "total_cost1": 150.0, "total_cost2": 140.0, "other_metric": 60.0 },
+      "total_product4": { "total_cost1": 0.0, "total_cost2": 0.0, "other_metric": 0.0 }
+    }
   };
 
   return (
-    <div className="values-container">
-      <div className="spacer"></div> {/* Spacer element */}
-      <div className="toggle-container">
-        <button onClick={() => navigate('/app')} className="toggle-button">
-          Back to Calculator
-        </button>
-      </div>
-      <h1>Totals Summary</h1>
-      {renderTableData(data)}
+    <div>
+      <h1>Product Totals</h1>
+      <DynamicTable data={jsonData} />
     </div>
   );
-}
-
-export default ValuesContainer;
+};
