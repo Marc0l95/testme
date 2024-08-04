@@ -1,69 +1,69 @@
-const DynamicTable = ({ data }) => {
-  const flattenData = (obj, prefix = '') => {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      if (typeof value === 'object' && value !== null) {
-        return { ...acc, ...flattenData(value, `${prefix}${key}.`) };
-      }
-      return { ...acc, [`${prefix}${key}`]: value };
-    }, {});
-  };
+import React, { useState, useEffect } from 'react';
+import './ValuesContainer.css';
 
-  const filteredData = Object.entries(flattenData(data))
-    .filter(([key]) => key.startsWith('total'))
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+function ValuesContainer() {
+  const [data, setData] = useState(null);
 
-  const groupedData = Object.entries(filteredData).reduce((acc, [key, value]) => {
-    const [category, product, metric] = key.split('.');
-    if (!acc[product]) acc[product] = {};
-    acc[product][metric] = value;
-    return acc;
-  }, {});
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+      const result = await response.json();
+      setData(result);
+    };
 
-  const nonZeroProducts = Object.entries(groupedData).filter(([_, values]) => 
-    Object.values(values).some(value => value !== 0)
-  );
+    fetchData();
+  }, []);
 
-  if (nonZeroProducts.length === 0) return null;
+  const renderTable = (productData, productName) => {
+    const totalKeys = Object.keys(productData).filter(key => key.startsWith('total'));
 
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Total Cost 1</th>
-          <th>Total Cost 2</th>
-        </tr>
-      </thead>
-      <tbody>
-        {nonZeroProducts.map(([product, values]) => (
-          <tr key={product}>
-            <td>{product}</td>
-            <td>{values.total_cost1}</td>
-            <td>{values.total_cost2}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-};
-
-// Usage
-const App = () => {
-  const jsonData = {
-    "compute": {
-      "total_product1": { "total_cost1": 120.0, "total_cost2": 110.0, "other_metric": 50.0 },
-      "total_product2": { "total_cost1": 0.0, "total_cost2": 0.0, "other_metric": 0.0 }
-    },
-    "storage": {
-      "total_product3": { "total_cost1": 150.0, "total_cost2": 140.0, "other_metric": 60.0 },
-      "total_product4": { "total_cost1": 0.0, "total_cost2": 0.0, "other_metric": 0.0 }
+    if (totalKeys.length === 0) {
+      return null;
     }
+
+    return (
+      <div key={productName} className="product-table">
+        <h3>{productName}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Value 1</th>
+              <th>Value 2</th>
+              <th>Value 3</th>
+              <th>Value 4</th>
+            </tr>
+          </thead>
+          <tbody>
+            {totalKeys.map(key => (
+              <tr key={key}>
+                <td>{productData[key].cost_without_vat}</td>
+                <td>{productData[key].cost_vat_rate}</td>
+                <td>{productData[key].cost_incl_vat}</td>
+                <td>{productData[key].cost_annual}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   return (
-    <div>
-      <h1>Product Totals</h1>
-      <DynamicTable data={jsonData} />
+    <div className="values-container">
+      {data && (
+        <>
+          {renderTable(data.Compute.subproduct1, 'Compute')}
+          {renderTable(data.Storage.subproduct1, 'Storage')}
+        </>
+      )}
     </div>
   );
-};
+}
+
+export default ValuesContainer;
