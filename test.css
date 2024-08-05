@@ -1,8 +1,8 @@
 .pulse-button {
-  padding: 20px; /* Adjust padding for a round shape */
+  padding: 10px 20px;
   font-size: 16px;
   border: none;
-  border-radius: 50%; /* Makes the button completely round */
+  border-radius: 5px; /* Regular button shape */
   background-color: #007bff;
   color: white;
   cursor: pointer;
@@ -12,44 +12,27 @@
   transition: background-color 0.3s;
 }
 
-.pulse-button:hover {
+.pulse-button:active {
   background-color: #0056b3;
 }
 
-.pulse-button::before,
-.pulse-button::after {
+.pulse-button::before {
   content: '';
   position: absolute;
   border-radius: 50%;
+  width: 0;
+  height: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.5);
+  transition: width 0.5s, height 0.5s, top 0.5s, left 0.5s;
+}
+
+.pulse-button:active::before {
   width: 200vw;
   height: 200vh;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   background-color: rgba(255, 255, 255, 0.3);
-  transition: width 0.5s, height 0.5s, top 0.5s, left 0.5s;
-}
-
-.pulse-button::before {
-  z-index: 1;
-}
-
-.pulse-button::after {
-  z-index: 0;
-}
-
-.pulse-button:hover::before {
-  width: 0;
-  height: 0;
-  top: 50%;
-  left: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-.pulse-button:active::before {
-  width: 0;
-  height: 0;
-  top: 50%;
-  left: 50%;
-  background-color: rgba(255, 255, 255, 0.7);
 }
