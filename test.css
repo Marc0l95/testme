@@ -1,8 +1,8 @@
 .pulse-button {
-  padding: 10px 40px; /* Adjust padding for horizontal elongation */
+  padding: 20px; /* Adjust padding for a round shape */
   font-size: 16px;
   border: none;
-  border-radius: 50px 50px 30px 30px; /* Egg shape */
+  border-radius: 50%; /* Makes the button completely round */
   background-color: #007bff;
   color: white;
   cursor: pointer;
