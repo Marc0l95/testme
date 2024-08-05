@@ -1,26 +1,60 @@
-.floating-box {
-  position: fixed;
-  top: 50px; /* Position from the top of the viewport */
-  right: 20px; /* Position from the right side of the viewport */
-  width: 200px; /* Width of the floating box */
-  padding: 20px; /* Padding inside the box */
-  background-color: white; /* Background color of the box */
-  border: 1px solid #ddd; /* Border color */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  z-index: 1000; /* Ensures the box stays above other content */
+.home {
+  text-align: center;
+  margin-top: 50px;
 }
 
-.floating-box h3 {
-  margin-top: 0; /* Removes the default margin-top of the heading */
-  margin-bottom: 10px; /* Margin between the heading and the total cost */
+.pulse-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 50px; /* Makes the button oval */
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s;
 }
 
-.floating-box p {
-  margin: 5px 0; /* Margin for the total cost and multiplier display */
+.pulse-button:hover {
+  background-color: #0056b3;
 }
 
-.floating-box input[type="range"] {
-  width: 100%; /* Slider takes the full width of the box */
-  margin: 10px 0; /* Margin around the slider */
+.pulse-button::before,
+.pulse-button::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  width: 300%;
+  height: 300%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.5);
+  transition: width 0.3s, height 0.3s, top 0.3s, left 0.3s;
+}
+
+.pulse-button::before {
+  z-index: 1;
+}
+
+.pulse-button::after {
+  z-index: 0;
+}
+
+.pulse-button:hover::before {
+  width: 400%;
+  height: 400%;
+  top: 50%;
+  left: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.pulse-button:active::before {
+  width: 500%;
+  height: 500%;
+  top: 50%;
+  left: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
 }
