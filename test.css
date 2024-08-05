@@ -1,13 +1,17 @@
 .home {
   text-align: center;
   margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .pulse-button {
-  padding: 10px 20px;
+  padding: 10px 40px; /* Adjust padding for horizontal elongation */
   font-size: 16px;
   border: none;
-  border-radius: 50px; /* Makes the button oval */
+  border-radius: 50px 50px 30px 30px; /* Egg shape */
   background-color: #007bff;
   color: white;
   cursor: pointer;
@@ -26,13 +30,13 @@
   content: '';
   position: absolute;
   border-radius: 50%;
-  width: 300%;
-  height: 300%;
+  width: 0;
+  height: 0;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: rgba(255, 255, 255, 0.5);
-  transition: width 0.3s, height 0.3s, top 0.3s, left 0.3s;
+  transition: width 0.5s, height 0.5s, top 0.5s, left 0.5s;
 }
 
 .pulse-button::before {
@@ -44,16 +48,16 @@
 }
 
 .pulse-button:hover::before {
-  width: 400%;
-  height: 400%;
+  width: 200vw;
+  height: 200vh;
   top: 50%;
   left: 50%;
   background-color: rgba(255, 255, 255, 0.3);
 }
 
 .pulse-button:active::before {
-  width: 500%;
-  height: 500%;
+  width: 300vw;
+  height: 300vh;
   top: 50%;
   left: 50%;
   background-color: rgba(255, 255, 255, 0.1);
