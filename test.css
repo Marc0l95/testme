@@ -1,38 +1,57 @@
-.pulse-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px; /* Regular button shape */
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  outline: none;
-  position: relative;
-  overflow: hidden;
-  transition: background-color 0.3s;
+body {
+    background-color: #2e3537;
+    padding: 2em;
 }
 
-.pulse-button:active {
-  background-color: #0056b3;
+button {
+    background: #2e3537;
+    padding: 0.75em 1.5em;
+    border: 3px solid white;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 600;
+    border-radius: 15px;
+    cursor: pointer;
+    margin: auto;
+    position: relative;
+    display: grid;
+    place-items: center;
+    transition: 0.5s;
 }
 
-.pulse-button::before {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  width: 0;
-  height: 0;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.5);
-  transition: width 0.5s, height 0.5s, top 0.5s, left 0.5s;
+button:before, button:after {
+    content: '';
+    position: absolute;
+    background-color: #FF0000;
+    height: 100%;
+    width: 60%;
+    z-index: -1;
+    opacity: 0.5;
+    border-radius: 15px;
 }
 
-.pulse-button:active::before {
-  width: 200vw;
-  height: 200vh;
-  top: 50%;
-  left: 50%;
-  background-color: rgba(255, 255, 255, 0.3);
+button:hover {
+    color: #FF0000;
+    border-color: #FF0000;
+    text-shadow: 0 0 5px #FF0000;
+    box-shadow:
+        0 0 10px #FF0000,
+        0 0 20px #FF0000;
+    letter-spacing: 5px;
+}
+
+button:hover:before {
+    animation: pulse 2s ease-out infinite;
+}
+
+button:hover:after {
+    animation: pulse 2s 1s ease-out infinite;
+}
+
+@keyframes  pulse {
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
 }
