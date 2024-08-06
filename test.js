@@ -1,25 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './ValuesContainer.css';
 
-function ValuesContainer() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({}),
-      });
-      const result = await response.json();
-      setData(result);
-    };
-
-    fetchData();
-  }, []);
-
+function ValuesContainer({ data }) {
   const roundToTwoDecimals = (value) => {
     return parseFloat(value).toFixed(2);
   };
