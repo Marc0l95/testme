@@ -1,80 +1,99 @@
-import unittest
-from app import app, calc_engine, calc_storage, calc_overall_total
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import FormComponent from './FormComponent'; // Import the new component
+import './InputContainer.css';
 
-class TestApp(unittest.TestCase):
+function InputContainer() {
+  const getInitialValue = (key, defaultValue) => {
+    const savedValue = sessionStorage.getItem(key);
+    if (savedValue === null) {
+      sessionStorage.setItem(key, defaultValue);
+      return defaultValue;
+    }
+    return savedValue;
+  };
 
-    def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
+  const [input1, setInput1] = useState(getInitialValue('input1', 'defaultInput1'));
+  const [input2, setInput2] = useState(getInitialValue('input2', 'defaultInput2'));
+  const [dropdown1, setDropdown1] = useState(getInitialValue('dropdown1', 'option1'));
+  const [dropdown2, setDropdown2] = useState(getInitialValue('dropdown2', 'option1'));
+  const [dropdown3, setDropdown3] = useState(getInitialValue('dropdown3', 'option1'));
 
-    def assertAlmostEqualWithTolerance(self, first, second, tolerance, msg=None):
-        if not (second - tolerance <= first <= second + tolerance):
-            standardMsg = f'{first} != {second} within tolerance {tolerance}'
-            self.fail(self._formatMessage(msg, standardMsg))
+  const sendDataToBackend = async (data) => {
+    try {
+      const response = await axios.post('http://localhost:5000/submit', data);
+      console.log(response.data);
+    } catch (error) {
+      console.error('There was an error!', error);
+    }
+  };
 
-    def test_calc_engine(self):
-        result = calc_engine(10, 5)
-        expected = {
-            "subproduct1": {
-                "cost_without_vat": 100.0,
-                "cost_vat_rate": 1.0,
-                "cost_incl_vat": 101.0,
-                "cost_annual": 1212.0
-            }
-        }
-        tolerance = 0.05  # Set your acceptable variance here
-        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_without_vat"], expected["subproduct1"]["cost_without_vat"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_vat_rate"], expected["subproduct1"]["cost_vat_rate"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_incl_vat"], expected["subproduct1"]["cost_incl_vat"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_annual"], expected["subproduct1"]["cost_annual"], tolerance)
+  const handleInputChange = (setter, key) => (e) => {
+    const value = e.target.value;
+    setter(value);
+    sessionStorage.setItem(key, value);
+    const data = {
+      input1,
+      input2,
+      dropdown1,
+      dropdown2,
+      dropdown3,
+      [e.target.id]: value,
+    };
+    sendDataToBackend(data);
+  };
 
-    def test_calc_storage(self):
-        result = calc_storage('medium', 'high')
-        expected = {
-            "subproduct1": {
-                "cost_without_vat": 7.5,
-                "cost_vat_rate": 0.15,
-                "cost_incl_vat": 7.65,
-                "cost_annual": 91.8
-            }
-        }
-        tolerance = 0.05  # Set your acceptable variance here
-        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_without_vat"], expected["subproduct1"]["cost_without_vat"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_vat_rate"], expected["subproduct1"]["cost_vat_rate"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_incl_vat"], expected["subproduct1"]["cost_incl_vat"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_annual"], expected["subproduct1"]["cost_annual"], tolerance)
+  const resetToDefaultValues = () => {
+    const defaultValues = {
+      input1: 'defaultInput1',
+      input2: 'defaultInput2',
+      dropdown1: 'option1',
+      dropdown2: 'option1',
+      dropdown3: 'option1',
+    };
 
-    def test_calc_overall_total(self):
-        compute_results = {
-            "subproduct1": {
-                "cost_without_vat": 100.0,
-                "cost_vat_rate": 1.0,
-                "cost_incl_vat": 101.0,
-                "cost_annual": 1212.0
-            }
-        }
-        storage_results = {
-            "subproduct1": {
-                "cost_without_vat": 7.5,
-                "cost_vat_rate": 0.15,
-                "cost_incl_vat": 7.65,
-                "cost_annual": 91.8
-            }
-        }
-        result = calc_overall_total(compute_results, storage_results)
-        expected = {
-            "overallTotals": {
-                "total_cost_without_vat": 107.5,
-                "total_cost_vat_rate": 1.15,
-                "total_cost_incl_vat": 108.65,
-                "total_cost_annual": 1303.8
-            }
-        }
-        tolerance = 0.05  # Set your acceptable variance here
-        self.assertAlmostEqualWithTolerance(result["overallTotals"]["total_cost_without_vat"], expected["overallTotals"]["total_cost_without_vat"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["overallTotals"]["total_cost_vat_rate"], expected["overallTotals"]["total_cost_vat_rate"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["overallTotals"]["total_cost_incl_vat"], expected["overallTotals"]["total_cost_incl_vat"], tolerance)
-        self.assertAlmostEqualWithTolerance(result["overallTotals"]["total_cost_annual"], expected["overallTotals"]["total_cost_annual"], tolerance)
+    Object.keys(defaultValues).forEach(key => {
+      sessionStorage.setItem(key, defaultValues[key]);
+    });
 
-if __name__ == '__main__':
-    unittest.main()
+    setInput1(defaultValues.input1);
+    setInput2(defaultValues.input2);
+    setDropdown1(defaultValues.dropdown1);
+    setDropdown2(defaultValues.dropdown2);
+    setDropdown3(defaultValues.dropdown3);
+
+    sendDataToBackend(defaultValues);
+  };
+
+  useEffect(() => {
+    const initialData = {
+      input1,
+      input2,
+      dropdown1,
+      dropdown2,
+      dropdown3,
+    };
+    sendDataToBackend(initialData);
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  return (
+    <div className="input-container">
+      <button onClick={resetToDefaultValues}>Reset to Default</button>
+      <FormComponent
+        input1={input1}
+        input2={input2}
+        dropdown1={dropdown1}
+        dropdown2={dropdown2}
+        dropdown3={dropdown3}
+        handleInputChange={handleInputChange}
+        setInput1={setInput1}
+        setInput2={setInput2}
+        setDropdown1={setDropdown1}
+        setDropdown2={setDropdown2}
+        setDropdown3={setDropdown3}
+      />
+    </div>
+  );
+}
+
+export default InputContainer;
