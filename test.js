@@ -1,61 +1,80 @@
-import React from 'react';
-import './ValuesContainer.css';
+import unittest
+from app import app, calc_engine, calc_storage, calc_overall_total
 
-function ValuesContainer({ data }) {
-  const roundToTwoDecimals = (value) => {
-    return parseFloat(value).toFixed(2);
-  };
+class TestApp(unittest.TestCase):
 
-  const renderTable = (productData, productName) => {
-    const totalKeys = Object.keys(productData).filter(key => key.startsWith('total'));
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
 
-    if (totalKeys.length === 0) {
-      return null;
-    }
+    def assertAlmostEqualWithTolerance(self, first, second, tolerance, msg=None):
+        if not (second - tolerance <= first <= second + tolerance):
+            standardMsg = f'{first} != {second} within tolerance {tolerance}'
+            self.fail(self._formatMessage(msg, standardMsg))
 
-    return (
-      <div key={productName} className="product-table">
-        <h3>{productName}</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Value 1</th>
-              <th>Value 2</th>
-              <th>Value 3</th>
-              <th>Value 4</th>
-            </tr>
-          </thead>
-          <tbody>
-            {totalKeys.map(key => (
-              <tr key={key}>
-                <td>{roundToTwoDecimals(productData[key].cost_without_vat)}</td>
-                <td>{roundToTwoDecimals(productData[key].cost_vat_rate)}</td>
-                <td>{roundToTwoDecimals(productData[key].cost_incl_vat)}</td>
-                <td>{roundToTwoDecimals(productData[key].cost_annual)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
+    def test_calc_engine(self):
+        result = calc_engine(10, 5)
+        expected = {
+            "subproduct1": {
+                "cost_without_vat": 100.0,
+                "cost_vat_rate": 1.0,
+                "cost_incl_vat": 101.0,
+                "cost_annual": 1212.0
+            }
+        }
+        tolerance = 0.05  # Set your acceptable variance here
+        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_without_vat"], expected["subproduct1"]["cost_without_vat"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_vat_rate"], expected["subproduct1"]["cost_vat_rate"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_incl_vat"], expected["subproduct1"]["cost_incl_vat"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_annual"], expected["subproduct1"]["cost_annual"], tolerance)
 
-  const productOrder = [
-    { key: 'Compute', name: 'Compute' },
-    { key: 'Storage', name: 'Storage' }
-  ];
+    def test_calc_storage(self):
+        result = calc_storage('medium', 'high')
+        expected = {
+            "subproduct1": {
+                "cost_without_vat": 7.5,
+                "cost_vat_rate": 0.15,
+                "cost_incl_vat": 7.65,
+                "cost_annual": 91.8
+            }
+        }
+        tolerance = 0.05  # Set your acceptable variance here
+        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_without_vat"], expected["subproduct1"]["cost_without_vat"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_vat_rate"], expected["subproduct1"]["cost_vat_rate"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_incl_vat"], expected["subproduct1"]["cost_incl_vat"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["subproduct1"]["cost_annual"], expected["subproduct1"]["cost_annual"], tolerance)
 
-  return (
-    <div className="values-container">
-      {data && (
-        <>
-          {productOrder.map(product => 
-            data[product.key] && renderTable(data[product.key].subproduct1, product.name)
-          )}
-        </>
-      )}
-    </div>
-  );
-}
+    def test_calc_overall_total(self):
+        compute_results = {
+            "subproduct1": {
+                "cost_without_vat": 100.0,
+                "cost_vat_rate": 1.0,
+                "cost_incl_vat": 101.0,
+                "cost_annual": 1212.0
+            }
+        }
+        storage_results = {
+            "subproduct1": {
+                "cost_without_vat": 7.5,
+                "cost_vat_rate": 0.15,
+                "cost_incl_vat": 7.65,
+                "cost_annual": 91.8
+            }
+        }
+        result = calc_overall_total(compute_results, storage_results)
+        expected = {
+            "overallTotals": {
+                "total_cost_without_vat": 107.5,
+                "total_cost_vat_rate": 1.15,
+                "total_cost_incl_vat": 108.65,
+                "total_cost_annual": 1303.8
+            }
+        }
+        tolerance = 0.05  # Set your acceptable variance here
+        self.assertAlmostEqualWithTolerance(result["overallTotals"]["total_cost_without_vat"], expected["overallTotals"]["total_cost_without_vat"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["overallTotals"]["total_cost_vat_rate"], expected["overallTotals"]["total_cost_vat_rate"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["overallTotals"]["total_cost_incl_vat"], expected["overallTotals"]["total_cost_incl_vat"], tolerance)
+        self.assertAlmostEqualWithTolerance(result["overallTotals"]["total_cost_annual"], expected["overallTotals"]["total_cost_annual"], tolerance)
 
-export default ValuesContainer;
+if __name__ == '__main__':
+    unittest.main()
