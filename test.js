@@ -76,6 +76,17 @@ function InputContainer() {
     sendDataToBackend(initialData);
   }, []); // Empty dependency array ensures this runs only once on mount
 
+  useEffect(() => {
+    const data = {
+      input1,
+      input2,
+      dropdown1,
+      dropdown2,
+      dropdown3,
+    };
+    sendDataToBackend(data);
+  }, [input1, input2, dropdown1, dropdown2, dropdown3]); // Dependencies array to watch for changes
+
   return (
     <div className="input-container">
       <button onClick={resetToDefaultValues}>Reset to Default</button>
