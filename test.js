@@ -4,7 +4,6 @@ import Navbar from './Navbar';
 import InputContainer from './InputContainer';
 import ValuesContainer from './ValuesContainer';
 import DetailedCalculations from './DetailedCalculations';
-import useSessionStorage from './useSessionStorage';
 import './MainApp.css';
 
 function MainApp() {
@@ -28,33 +27,40 @@ function MainApp() {
   const [dropdown3, setDropdown3] = useState(getSessionStorageOrDefault('dropdown3', defaultValues.dropdown3));
   const [result, setResult] = useState(null);
   const [showDetailedCalculations, setShowDetailedCalculations] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useSessionStorage('input1', input1);
-  useSessionStorage('input2', input2);
-  useSessionStorage('dropdown1', dropdown1);
-  useSessionStorage('dropdown2', dropdown2);
-  useSessionStorage('dropdown3', dropdown3);
 
   useEffect(() => {
     const fetchValues = async () => {
-      setLoading(true);
-      setError(null);
       const data = { input1, input2, dropdown1, dropdown2, dropdown3 };
       try {
         const response = await axios.post('http://localhost:5000/values', data);
         setResult(response.data);
       } catch (error) {
-        setError('Error fetching values data');
         console.error('Error fetching values data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchValues();
   }, [input1, input2, dropdown1, dropdown2, dropdown3]);
+
+  useEffect(() => {
+    sessionStorage.setItem('input1', JSON.stringify(input1));
+  }, [input1]);
+
+  useEffect(() => {
+    sessionStorage.setItem('input2', JSON.stringify(input2));
+  }, [input2]);
+
+  useEffect(() => {
+    sessionStorage.setItem('dropdown1', JSON.stringify(dropdown1));
+  }, [dropdown1]);
+
+  useEffect(() => {
+    sessionStorage.setItem('dropdown2', JSON.stringify(dropdown2));
+  }, [dropdown2]);
+
+  useEffect(() => {
+    sessionStorage.setItem('dropdown3', JSON.stringify(dropdown3));
+  }, [dropdown3]);
 
   const toggleDetailedCalculations = () => {
     setShowDetailedCalculations(!showDetailedCalculations);
@@ -69,8 +75,6 @@ function MainApp() {
         </button>
       </div>
       <div className="container">
-        {loading && <p>Loading...</p>}
-        {error && <p className="error">{error}</p>}
         {!showDetailedCalculations ? (
           <>
             <InputContainer
