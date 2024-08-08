@@ -1,9 +1,37 @@
-click==7.1.2
-Flask==1.1.2
-Flask-Cors==3.0.10
-itsdangerous==1.1.0
-Jinja2==2.11.3
-MarkupSafe==1.1.1
-pytest==6.2.4
-pytest-flask==1.2.0
-Werkzeug==1.0.1
+# Node.js / React
+node_modules/
+build/
+dist/
+.env
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/coverage
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.venv
+env/
+venv/
+ENV/
+venv.bak/
+*.sqlite3
+*.db
+*.log
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
