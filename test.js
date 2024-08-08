@@ -17,25 +17,53 @@ function MainApp() {
 
   const getSessionStorageOrDefault = (key, defaultValue) => {
     const stored = sessionStorage.getItem(key);
-    return stored ? JSON.parse(stored) : defaultValue;
+    try {
+      return stored ? JSON.parse(stored) : defaultValue;
+    } catch (e) {
+      console.error(`Error parsing sessionStorage item ${key}:`, e);
+      return defaultValue;
+    }
   };
 
-  const [input1, setInput1] = useState(getSessionStorageOrDefault('input1', defaultValues.input1));
-  const [input2, setInput2] = useState(getSessionStorageOrDefault('input2', defaultValues.input2));
-  const [dropdown1, setDropdown1] = useState(getSessionStorageOrDefault('dropdown1', defaultValues.dropdown1));
-  const [dropdown2, setDropdown2] = useState(getSessionStorageOrDefault('dropdown2', defaultValues.dropdown2));
-  const [dropdown3, setDropdown3] = useState(getSessionStorageOrDefault('dropdown3', defaultValues.dropdown3));
+  const [input1, setInput1] = useState(defaultValues.input1);
+  const [input2, setInput2] = useState(defaultValues.input2);
+  const [dropdown1, setDropdown1] = useState(defaultValues.dropdown1);
+  const [dropdown2, setDropdown2] = useState(defaultValues.dropdown2);
+  const [dropdown3, setDropdown3] = useState(defaultValues.dropdown3);
   const [result, setResult] = useState(null);
   const [showDetailedCalculations, setShowDetailedCalculations] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const isRefreshed = sessionStorage.getItem('isRefreshed');
+    if (isRefreshed) {
+      setInput1(getSessionStorageOrDefault('input1', defaultValues.input1));
+      setInput2(getSessionStorageOrDefault('input2', defaultValues.input2));
+      setDropdown1(getSessionStorageOrDefault('dropdown1', defaultValues.dropdown1));
+      setDropdown2(getSessionStorageOrDefault('dropdown2', defaultValues.dropdown2));
+      setDropdown3(getSessionStorageOrDefault('dropdown3', defaultValues.dropdown3));
+    }
+    sessionStorage.setItem('isRefreshed', 'true');
+  }, []);
 
   useEffect(() => {
     const fetchValues = async () => {
+      setLoading(true);
+      setError(null);
       const data = { input1, input2, dropdown1, dropdown2, dropdown3 };
       try {
         const response = await axios.post('http://localhost:5000/values', data);
-        setResult(response.data);
+        if (response.headers['content-type'].includes('application/json')) {
+          setResult(response.data);
+        } else {
+          throw new Error('Invalid JSON response');
+        }
       } catch (error) {
+        setError('Error fetching values data');
         console.error('Error fetching values data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -44,26 +72,22 @@ function MainApp() {
 
   useEffect(() => {
     sessionStorage.setItem('input1', JSON.stringify(input1));
-  }, [input1]);
-
-  useEffect(() => {
     sessionStorage.setItem('input2', JSON.stringify(input2));
-  }, [input2]);
-
-  useEffect(() => {
     sessionStorage.setItem('dropdown1', JSON.stringify(dropdown1));
-  }, [dropdown1]);
-
-  useEffect(() => {
     sessionStorage.setItem('dropdown2', JSON.stringify(dropdown2));
-  }, [dropdown2]);
-
-  useEffect(() => {
     sessionStorage.setItem('dropdown3', JSON.stringify(dropdown3));
-  }, [dropdown3]);
+  }, [input1, input2, dropdown1, dropdown2, dropdown3]);
 
   const toggleDetailedCalculations = () => {
     setShowDetailedCalculations(!showDetailedCalculations);
+  };
+
+  const resetInputs = () => {
+    setInput1(defaultValues.input1);
+    setInput2(defaultValues.input2);
+    setDropdown1(defaultValues.dropdown1);
+    setDropdown2(defaultValues.dropdown2);
+    setDropdown3(defaultValues.dropdown3);
   };
 
   return (
@@ -75,6 +99,8 @@ function MainApp() {
         </button>
       </div>
       <div className="container">
+        {loading && <p>Loading...</p>}
+        {error && <p className="error">{error}</p>}
         {!showDetailedCalculations ? (
           <>
             <InputContainer
@@ -88,6 +114,7 @@ function MainApp() {
               setDropdown2={setDropdown2}
               dropdown3={dropdown3}
               setDropdown3={setDropdown3}
+              resetInputs={resetInputs}
             />
             <ValuesContainer data={result} />
           </>
