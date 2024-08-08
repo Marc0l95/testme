@@ -4,71 +4,31 @@ import Navbar from './Navbar';
 import InputContainer from './InputContainer';
 import ValuesContainer from './ValuesContainer';
 import DetailedCalculations from './DetailedCalculations';
-import './MainApp.css';
 
-function MainApp() {
-  const defaultValues = {
-    input1: '',
-    input2: '',
-    dropdown1: '',
-    dropdown2: '',
-    dropdown3: ''
-  };
-
-  const getSessionStorageOrDefault = (key, defaultValue) => {
-    const stored = sessionStorage.getItem(key);
-    try {
-      return stored ? JSON.parse(stored) : defaultValue;
-    } catch (e) {
-      console.error(`Error parsing sessionStorage item ${key}:`, e);
-      return defaultValue;
-    }
-  };
-
+const MainApp = ({ defaultValues }) => {
   const [input1, setInput1] = useState(defaultValues.input1);
   const [input2, setInput2] = useState(defaultValues.input2);
   const [dropdown1, setDropdown1] = useState(defaultValues.dropdown1);
   const [dropdown2, setDropdown2] = useState(defaultValues.dropdown2);
   const [dropdown3, setDropdown3] = useState(defaultValues.dropdown3);
-  const [result, setResult] = useState(null);
   const [showDetailedCalculations, setShowDetailedCalculations] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
 
   useEffect(() => {
-    const isRefreshed = sessionStorage.getItem('isRefreshed');
-    if (isRefreshed) {
-      setInput1(getSessionStorageOrDefault('input1', defaultValues.input1));
-      setInput2(getSessionStorageOrDefault('input2', defaultValues.input2));
-      setDropdown1(getSessionStorageOrDefault('dropdown1', defaultValues.dropdown1));
-      setDropdown2(getSessionStorageOrDefault('dropdown2', defaultValues.dropdown2));
-      setDropdown3(getSessionStorageOrDefault('dropdown3', defaultValues.dropdown3));
-    }
-    sessionStorage.setItem('isRefreshed', 'true');
+    const storedInput1 = JSON.parse(sessionStorage.getItem('input1'));
+    const storedInput2 = JSON.parse(sessionStorage.getItem('input2'));
+    const storedDropdown1 = JSON.parse(sessionStorage.getItem('dropdown1'));
+    const storedDropdown2 = JSON.parse(sessionStorage.getItem('dropdown2'));
+    const storedDropdown3 = JSON.parse(sessionStorage.getItem('dropdown3'));
+
+    if (storedInput1 !== null) setInput1(storedInput1);
+    if (storedInput2 !== null) setInput2(storedInput2);
+    if (storedDropdown1 !== null) setDropdown1(storedDropdown1);
+    if (storedDropdown2 !== null) setDropdown2(storedDropdown2);
+    if (storedDropdown3 !== null) setDropdown3(storedDropdown3);
   }, []);
-
-  const fetchValues = async (data) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.post('http://localhost:5000/values', data);
-      if (response.headers['content-type'].includes('application/json')) {
-        setResult(response.data);
-      } else {
-        throw new Error('Invalid JSON response');
-      }
-    } catch (error) {
-      setError('Error fetching values data');
-      console.error('Error fetching values data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const data = { input1, input2, dropdown1, dropdown2, dropdown3 };
-    fetchValues(data);
-  }, [input1, input2, dropdown1, dropdown2, dropdown3]);
 
   useEffect(() => {
     sessionStorage.setItem('input1', JSON.stringify(input1));
@@ -76,6 +36,29 @@ function MainApp() {
     sessionStorage.setItem('dropdown1', JSON.stringify(dropdown1));
     sessionStorage.setItem('dropdown2', JSON.stringify(dropdown2));
     sessionStorage.setItem('dropdown3', JSON.stringify(dropdown3));
+  }, [input1, input2, dropdown1, dropdown2, dropdown3]);
+
+  useEffect(() => {
+    const fetchValues = async () => {
+      setLoading(true);
+      setError(null);
+      const data = { input1, input2, dropdown1, dropdown2, dropdown3 };
+      try {
+        const response = await axios.post('http://localhost:5000/values', data);
+        if (response.headers['content-type'].includes('application/json')) {
+          setResult(response.data);
+        } else {
+          throw new Error('Invalid JSON response');
+        }
+      } catch (error) {
+        setError('Error fetching values data');
+        console.error('Error fetching values data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchValues();
   }, [input1, input2, dropdown1, dropdown2, dropdown3]);
 
   const toggleDetailedCalculations = () => {
@@ -124,6 +107,6 @@ function MainApp() {
       </div>
     </div>
   );
-}
+};
 
 export default MainApp;
