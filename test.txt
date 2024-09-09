@@ -1,43 +1,34 @@
-name: Run Tests on Merge to Main
+resource "google_project_service" "cloud_run_api" {
+  project = var.project_id
+  service = "run.googleapis.com"
+}
 
-on:
-  push:
-    branches:
-      - main
+resource "google_project_service" "cloud_dns_api" {
+  project = var.project_id
+  service = "dns.googleapis.com"
+}
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+resource "google_project_service" "iap_api" {
+  project = var.project_id
+  service = "iap.googleapis.com"
+}
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+resource "google_project_service" "cloud_resource_manager_api" {
+  project = var.project_id
+  service = "cloudresourcemanager.googleapis.com"
+}
 
-      # Node.js / React setup and tests
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
+resource "google_project_service" "iam_api" {
+  project = var.project_id
+  service = "iam.googleapis.com"
+}
 
-      - name: Install Node.js dependencies
-        run: npm install
+resource "google_project_service" "cloud_build_api" {
+  project = var.project_id
+  service = "cloudbuild.googleapis.com"
+}
 
-      - name: Run Node.js tests
-        run: npm test
-
-      # Python setup and tests
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-
-      - name: Install Python dependencies
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-
-      - name: Run Python tests
-        run: |
-          source venv/bin/activate
-          pytest
+resource "google_project_service" "compute_engine_api" {
+  project = var.project_id
+  service = "compute.googleapis.com"
+}
