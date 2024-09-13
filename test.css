@@ -1,57 +1,26 @@
-body {
-    background-color: #2e3537;
-    padding: 2em;
-}
-
-button {
-    background: #2e3537;
-    padding: 0.75em 1.5em;
-    border: 3px solid white;
+.header-with-info {
+    display: flex;
+    align-items: center; /* Align items vertically centered */
+    justify-content: flex-start; /* Ensure space between header and button */
+    width: 100%; /* Ensure the container takes full width */
+  }
+  
+  .info-button {
+    background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    font-weight: 600;
-    border-radius: 15px;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    text-align: center;
     cursor: pointer;
-    margin: auto;
-    position: relative;
-    display: grid;
-    place-items: center;
-    transition: 0.5s;
-}
-
-button:before, button:after {
-    content: '';
-    position: absolute;
-    background-color: #FF0000;
-    height: 100%;
-    width: 60%;
-    z-index: -1;
-    opacity: 0.5;
-    border-radius: 15px;
-}
-
-button:hover {
-    color: #FF0000;
-    border-color: #FF0000;
-    text-shadow: 0 0 5px #FF0000;
-    box-shadow:
-        0 0 10px #FF0000,
-        0 0 20px #FF0000;
-    letter-spacing: 5px;
-}
-
-button:hover:before {
-    animation: pulse 2s ease-out infinite;
-}
-
-button:hover:after {
-    animation: pulse 2s 1s ease-out infinite;
-}
-
-@keyframes  pulse {
-    100% {
-        transform: scale(3);
-        opacity: 0;
-    }
-}
+    margin-left: 10px;
+    font-size: 16px;
+    line-height: 30px; /* Ensures the "i" is vertically centered */
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  
+  .info-button:hover {
+    background: linear-gradient(135deg, #0056b3, #003f7f);
+  }
