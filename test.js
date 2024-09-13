@@ -1,27 +1,30 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './App.css';
+import React from 'react';
+import './InfoButton.css'
 
-function App() {
-  const [message, setMessage] = useState('');
-
+const InfoButton = ({ content }) => {
   const handleClick = () => {
-    axios.get('http://localhost:8080/hello')
-      .then(response => {
-        // Adjust to handle the structured JSON response
-        setMessage(response.data.data.message);
-      })
-      .catch(error => {
-        console.error('There was an error!', error);
-      });
+    const infoWindow = window.open('', 'InfoWindow', 'width=450,height=300');
+    infoWindow.document.write(`
+      <html>
+        <head>
+          <title>Information</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+            }
+          </style>
+        </head>
+        <body>
+          ${content}
+        </body>
+      </html>
+    `);
   };
 
   return (
-    <div className="App">
-      <button onClick={handleClick}>Say Hello</button>
-      <div id="message">{message}</div>
-    </div>
+    <button onClick={handleClick} className="info-button">i</button>
   );
-}
+};
 
-export default App;
+export default InfoButton;
