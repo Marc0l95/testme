@@ -1,45 +1,42 @@
 provider "google" {
   project = var.project_id
-  region  = "europe-west2"  
+  region  = var.region
 }
 
-# Google Cloud VPC
+# VPC Network Setup
 resource "google_compute_network" "vpc_network" {
-  name = "internal-vpc"
+  name = "private-vpc"
+  auto_create_subnetworks = false
 }
 
-# VPC Connector
+resource "google_compute_subnetwork" "subnet" {
+  name          = "private-subnet"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = var.region
+  network       = google_compute_network.vpc_network.id
+}
+
+# VPC Connector for Cloud Run
 resource "google_vpc_access_connector" "vpc_connector" {
-  name        = "vpc-connector"
-  network     = google_compute_network.vpc_network.name
-  region      = "europe-west2" 
+  name         = var.vpc_connector
+  network      = google_compute_network.vpc_network.name
+  region       = var.region
   ip_cidr_range = "10.8.0.0/28"
 }
 
-# Create a subnet for your internal services
-resource "google_compute_subnetwork" "subnet" {
-  name          = "internal-subnet"
-  network       = google_compute_network.vpc_network.name
-  ip_cidr_range = "10.0.0.0/16"
-  region        = "europe-west2"  
-}
-
-# Cloud Run for the frontend with VPC Connector
-resource "google_cloud_run_service" "frontend" {
-  name     = "frontend"
-  location = "europe-west2"  # Change to London region
+# Cloud Run Backend Service (Go)
+resource "google_cloud_run_service" "go_backend" {
+  name     = "go-backend"
+  location = var.region
 
   template {
     spec {
       containers {
-        image = "gcr.io/${var.project_id}/frontend"  # Replace with your frontend Docker image
-        ports {
-          container_port = 80
-        }
+        image = "gcr.io/${var.project_id}/go-backend"
       }
       vpc_access {
         connector = google_vpc_access_connector.vpc_connector.id
-        egress    = "all-traffic"
+        egress = "PRIVATE_RANGES_ONLY"
       }
     }
   }
@@ -48,20 +45,23 @@ resource "google_cloud_run_service" "frontend" {
     percent         = 100
     latest_revision = true
   }
+
+  autogenerate_revision_name = true
 }
 
-# Cloud Run for the frontend
-resource "google_cloud_run_service" "frontend" {
-  name     = "frontend"
-  location = "europe-west2"  
+# Cloud Run Frontend Service (React)
+resource "google_cloud_run_service" "react_frontend" {
+  name     = "react-frontend"
+  location = var.region
 
   template {
     spec {
       containers {
-        image = "gcr.io/${var.project_id}/frontend"  # Replace with your frontend Docker image
-        ports {
-          container_port = 80
-        }
+        image = "gcr.io/${var.project_id}/react-frontend"
+      }
+      vpc_access {
+        connector = google_vpc_access_connector.vpc_connector.id
+        egress = "PRIVATE_RANGES_ONLY"
       }
     }
   }
@@ -70,45 +70,30 @@ resource "google_cloud_run_service" "frontend" {
     percent         = 100
     latest_revision = true
   }
+
+  autogenerate_revision_name = true
 }
 
-# Firewall rule to allow traffic from VPC to Cloud Run services
-resource "google_compute_firewall" "allow_vpc_to_cloud_run" {
-  name    = "allow-vpc-to-cloud-run"
-  network = google_compute_network.vpc_network.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80", "443", "8080"]
-  }
-
-  source_ranges = ["10.0.0.0/16"]  # Adjust this to match your VPC's CIDR range
-  direction     = "INGRESS"
+# IAM roles to allow authenticated users access Cloud Run services
+resource "google_cloud_run_service_iam_member" "backend_invoker" {
+  service  = google_cloud_run_service.go_backend.name
+  location = var.region
+  role     = "roles/run.invoker"
+  member   = "allAuthenticatedUsers"
 }
 
-# Domain mapping for frontend
-resource "google_cloud_run_domain_mapping" "frontend_domain" {
-  location = "europe-west2" 
-  name = "frontend.internal.yourcompany.com"  # Replace with your custom domain
-
-  metadata {
-    namespace = data.google_project.project.project_id
-  }
-  spec {
-    route_name = google_cloud_run_service.frontend.name
-  }
-
-  depends_on = [
-    google_cloud_run_service.frontend
-  ]
+resource "google_cloud_run_service_iam_member" "frontend_invoker" {
+  service  = google_cloud_run_service.react_frontend.name
+  location = var.region
+  role     = "roles/run.invoker"
+  member   = "allAuthenticatedUsers"
 }
 
-# Internal DNS Setup using Cloud DNS
-resource "google_dns_managed_zone" "internal_dns_zone" {
-  name        = "internal-dns-zone"
-  dns_name    = "internal.yourcompany.com."
-  visibility  = "private"
-  description = "Internal DNS zone for services"
+# Google Cloud DNS Private Zone
+resource "google_dns_managed_zone" "private_zone" {
+  name     = "private-zone"
+  dns_name = "your-private-domain.com."
+  visibility = "private"
   private_visibility_config {
     networks {
       network_url = google_compute_network.vpc_network.self_link
@@ -116,93 +101,43 @@ resource "google_dns_managed_zone" "internal_dns_zone" {
   }
 }
 
-# DNS Record to Map Custom Domain to Cloud Run Frontend
-resource "google_dns_record_set" "frontend_dns_record" {
-  name         = "frontend.internal.yourcompany.com."
+# DNS record for private domain
+resource "google_dns_record_set" "private_domain_record" {
+  name         = "your-private-service.your-private-domain.com."
+  managed_zone = google_dns_managed_zone.private_zone.name
   type         = "A"
   ttl          = 300
-  managed_zone = google_dns_managed_zone.internal_dns_zone.name
-  rrdatas      = [google_cloud_run_domain_mapping.frontend_domain.status[0].resource_records[0].rrdata]
+  rrdatas      = [google_cloud_run_service.go_backend.status[0].url]
 }
 
-# Enable the IAP API
-resource "google_project_service" "iap_api" {
-  service = "iap.googleapis.com"
-}
-
-# IAP Web Backend Service
-resource "google_iap_web_backend_service" "iap_backend" {
-  name     = "iap-backend"
-  project  = var.project_id
-  region   = "europe-west2"  # Change to London region
-  backend_service = google_cloud_run_service.frontend.name
-}
-
-# IAP Web IAM Binding
-resource "google_iap_web_iam_binding" "iap_binding" {
+# Identity-Aware Proxy (IAP) setup for authentication
+resource "google_iap_web_type_compute_iam_binding" "iap_binding" {
   project       = var.project_id
-
-  role = "roles/iap.httpsResourceAccessor"
-
-  members = [
-    "user:your-user@example.com"  # Replace with the user or group who can access the service
-  ]
+  members       = ["group:your-group@example.com"]
+  role          = "roles/iap.httpsResourceAccessor"
 }
 
-# Enable the Cloud Armor API
-resource "google_project_service" "cloud_armor_api" {
-  service = "compute.googleapis.com"
+resource "google_project_iam_binding" "project_iap_binding" {
+  project = var.project_id
+  role    = "roles/iap.httpsResourceAccessor"
+  members = ["user:your-email@example.com"]
 }
 
-# Cloud Armor Security Policy with Rate Limiting
-resource "google_compute_security_policy" "rate_limit_policy" {
-  name        = "rate-limit-policy"
-  description = "Rate limit policy for internal frontend"
-
-  rule {
-    action   = "rate_based_ban"
-    priority = 1000
-    match {
-      versioned_expr = "SRC_IPS_V1"
-      config {
-        src_ip_ranges = ["0.0.0.0/0"]
-      }
-    }
-
-    rate_limit_options {
-      conform_action = "allow"
-      enforce_on_key          = "IP"
-      rate_limit_threshold {
-        count = 1000
-        interval_sec = 60
-      }
-
-      ban_duration_sec = 600
-      exceed_action    = "deny(403)" # Deny access if the rate limit exceeds
-    }
+# Optional: Build and Push Docker Images (local-exec)
+resource "null_resource" "build_and_push_backend" {
+  provisioner "local-exec" {
+    command = <<EOT
+    docker build -t gcr.io/${var.project_id}/go-backend ./go-backend
+    docker push gcr.io/${var.project_id}/go-backend
+    EOT
   }
 }
 
-# Attach the Cloud Armor policy to the Cloud Run service
-resource "google_compute_backend_service" "frontend_backend_service" {
-  name           = "frontend-backend-service"
-  protocol       = "HTTPS"
-  port_name      = "https"
-  health_checks  = [google_compute_https_health_check.frontend_health_check.self_link]
-  security_policy = google_compute_security_policy.rate_limit_policy.self_link  # Attach policy here
-}
-
-# Health check for frontend
-resource "google_compute_https_health_check" "frontend_health_check" {
-  name        = "frontend-https-health-check"
-  request_path = "/"
-}
-
-# Outputs
-output "backend_url" {
-  value = google_cloud_run_service.backend.status[0].url
-}
-
-output "frontend_url" {
-  value = "https://frontend.internal.yourcompany.com"
+resource "null_resource" "build_and_push_frontend" {
+  provisioner "local-exec" {
+    command = <<EOT
+    docker build -t gcr.io/${var.project_id}/react-frontend ./react-frontend
+    docker push gcr.io/${var.project_id}/react-frontend
+    EOT
+  }
 }
