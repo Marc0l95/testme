@@ -1,26 +1,127 @@
-.header-with-info {
-    display: flex;
-    align-items: center; /* Align items vertically centered */
-    justify-content: flex-start; /* Ensure space between header and button */
-    width: 100%; /* Ensure the container takes full width */
-  }
-  
-  .info-button {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    cursor: pointer;
-    margin-left: 10px;
-    font-size: 16px;
-    line-height: 30px; /* Ensures the "i" is vertically centered */
-    font-weight: bold;
-    transition: background 0.3s;
-  }
-  
-  .info-button:hover {
-    background: linear-gradient(135deg, #0056b3, #003f7f);
-  }
+/* global.css */
+
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* CSS Variables */
+:root {
+  /* Colors */
+  --primary-color: #007bff;
+  --secondary-color: #0056b3;
+  --success-color: #28a745;
+  --hover-success-color: #218838;
+  --background-color: #f8f9fa;
+  --text-color: #212529;
+  --border-color: #dee2e6;
+  --modal-overlay-color: rgba(0, 0, 0, 0.5);
+  --button-hover-color: #0056b3;
+  --button-background-color: #007bff;
+  --button-text-color: white;
+
+  /* Fonts */
+  --font-family: 'Arial, sans-serif';
+  --font-size: 16px;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Borders */
+  --border-radius: 4px;
+  --border-radius-round: 50%;
+
+  /* Shadows */
+  --box-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --box-shadow-lg: 0 6px 12px rgba(0, 0, 0, 0.15);
+
+  /* Breakpoints */
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1200px;
+}
+
+/* Global Styles */
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-bold);
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size);
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  background-color: var(--button-hover-color);
+}
+
+input, select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  font-size: var(--font-size);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-sm);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--modal-overlay-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-md);
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #000;
+}
