@@ -1,16 +1,11 @@
-variable "project_id" {
-  type = string
-  description = "The Google Cloud project ID"
+output "go_backend_url" {
+  value = google_cloud_run_service.go_backend.status[0].url
 }
 
-variable "region" {
-  type    = string
-  default = "us-central1"
-  description = "The Google Cloud region to deploy resources"
+output "react_frontend_url" {
+  value = google_cloud_run_service.react_frontend.status[0].url
 }
 
-variable "vpc_connector" {
-  type = string
-  default = "my-vpc-connector"
-  description = "The VPC connector name"
+output "private_dns_zone_name" {
+  value = google_dns_managed_zone.private_zone.name
 }
