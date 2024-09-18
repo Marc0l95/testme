@@ -1,11 +1,59 @@
-output "go_backend_url" {
-  value = google_cloud_run_service.go_backend.status[0].url
+provider "google" {
+  credentials = file("path/to/your-service-account-key.json")
 }
 
-output "react_frontend_url" {
-  value = google_cloud_run_service.react_frontend.status[0].url
+# ---------------------------
+# Variables
+# ---------------------------
+variable "project_name" {
+  description = "The name of the Google Cloud project"
+  type        = string
 }
 
-output "private_dns_zone_name" {
-  value = google_dns_managed_zone.private_zone.name
+variable "billing_account" {
+  description = "Your GCP Billing Account ID"
+  type        = string
+}
+
+variable "region" {
+  description = "The Google Cloud region to deploy resources"
+  default     = "europe-west2" # London region
+  type        = string
+}
+
+# ---------------------------
+# Google Cloud Project Creation
+# ---------------------------
+resource "google_project" "project" {
+  name       = var.project_name
+  project_id = "${var.project_name}-${random_id.project_suffix.hex}"
+  org_id     = "your-organization-id"  # Optional: If you're using an organization
+  billing_account = var.billing_account
+}
+
+resource "random_id" "project_suffix" {
+  byte_length = 4
+}
+
+# Enable required APIs for Cloud Run and DNS
+resource "google_project_service" "enable_run" {
+  project = google_project.project.project_id
+  service = "run.googleapis.com"
+}
+
+resource "google_project_service" "enable_dns" {
+  project = google_project.project.project_id
+  service = "dns.googleapis.com"
+}
+
+resource "google_project_service" "enable_iap" {
+  project = google_project.project.project_id
+  service = "iap.googleapis.com"
+}
+
+# ---------------------------
+# Outputs
+# ---------------------------
+output "project_id" {
+  value = google_project.project.project_id
 }
