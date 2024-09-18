@@ -1,143 +1,16 @@
-provider "google" {
-  project = var.project_id
-  region  = var.region
+variable "project_id" {
+  type = string
+  description = "The Google Cloud project ID"
 }
 
-# VPC Network Setup
-resource "google_compute_network" "vpc_network" {
-  name = "private-vpc"
-  auto_create_subnetworks = false
+variable "region" {
+  type    = string
+  default = "us-central1"
+  description = "The Google Cloud region to deploy resources"
 }
 
-resource "google_compute_subnetwork" "subnet" {
-  name          = "private-subnet"
-  ip_cidr_range = "10.0.0.0/24"
-  region        = var.region
-  network       = google_compute_network.vpc_network.id
-}
-
-# VPC Connector for Cloud Run
-resource "google_vpc_access_connector" "vpc_connector" {
-  name         = var.vpc_connector
-  network      = google_compute_network.vpc_network.name
-  region       = var.region
-  ip_cidr_range = "10.8.0.0/28"
-}
-
-# Cloud Run Backend Service (Go)
-resource "google_cloud_run_service" "go_backend" {
-  name     = "go-backend"
-  location = var.region
-
-  template {
-    spec {
-      containers {
-        image = "gcr.io/${var.project_id}/go-backend"
-      }
-      vpc_access {
-        connector = google_vpc_access_connector.vpc_connector.id
-        egress = "PRIVATE_RANGES_ONLY"
-      }
-    }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-
-  autogenerate_revision_name = true
-}
-
-# Cloud Run Frontend Service (React)
-resource "google_cloud_run_service" "react_frontend" {
-  name     = "react-frontend"
-  location = var.region
-
-  template {
-    spec {
-      containers {
-        image = "gcr.io/${var.project_id}/react-frontend"
-      }
-      vpc_access {
-        connector = google_vpc_access_connector.vpc_connector.id
-        egress = "PRIVATE_RANGES_ONLY"
-      }
-    }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-
-  autogenerate_revision_name = true
-}
-
-# IAM roles to allow authenticated users access Cloud Run services
-resource "google_cloud_run_service_iam_member" "backend_invoker" {
-  service  = google_cloud_run_service.go_backend.name
-  location = var.region
-  role     = "roles/run.invoker"
-  member   = "allAuthenticatedUsers"
-}
-
-resource "google_cloud_run_service_iam_member" "frontend_invoker" {
-  service  = google_cloud_run_service.react_frontend.name
-  location = var.region
-  role     = "roles/run.invoker"
-  member   = "allAuthenticatedUsers"
-}
-
-# Google Cloud DNS Private Zone
-resource "google_dns_managed_zone" "private_zone" {
-  name     = "private-zone"
-  dns_name = "your-private-domain.com."
-  visibility = "private"
-  private_visibility_config {
-    networks {
-      network_url = google_compute_network.vpc_network.self_link
-    }
-  }
-}
-
-# DNS record for private domain
-resource "google_dns_record_set" "private_domain_record" {
-  name         = "your-private-service.your-private-domain.com."
-  managed_zone = google_dns_managed_zone.private_zone.name
-  type         = "A"
-  ttl          = 300
-  rrdatas      = [google_cloud_run_service.go_backend.status[0].url]
-}
-
-# Identity-Aware Proxy (IAP) setup for authentication
-resource "google_iap_web_type_compute_iam_binding" "iap_binding" {
-  project       = var.project_id
-  members       = ["group:your-group@example.com"]
-  role          = "roles/iap.httpsResourceAccessor"
-}
-
-resource "google_project_iam_binding" "project_iap_binding" {
-  project = var.project_id
-  role    = "roles/iap.httpsResourceAccessor"
-  members = ["user:your-email@example.com"]
-}
-
-# Optional: Build and Push Docker Images (local-exec)
-resource "null_resource" "build_and_push_backend" {
-  provisioner "local-exec" {
-    command = <<EOT
-    docker build -t gcr.io/${var.project_id}/go-backend ./go-backend
-    docker push gcr.io/${var.project_id}/go-backend
-    EOT
-  }
-}
-
-resource "null_resource" "build_and_push_frontend" {
-  provisioner "local-exec" {
-    command = <<EOT
-    docker build -t gcr.io/${var.project_id}/react-frontend ./react-frontend
-    docker push gcr.io/${var.project_id}/react-frontend
-    EOT
-  }
+variable "vpc_connector" {
+  type = string
+  default = "my-vpc-connector"
+  description = "The VPC connector name"
 }
