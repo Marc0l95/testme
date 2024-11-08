@@ -1,32 +1,31 @@
-name: Restore Staging Branch
+name: Go Lint and Format
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
-    types: [closed]
     branches:
       - main
 
 jobs:
-  restore-staging:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'staging'
+  go-lint-format:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
         with:
-          ref: main
+          go-version: '1.16'
 
-      - name: Set up Git
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Install golint
+        run: go install golang.org/x/lint/golint@latest
 
-      - name: Delete staging branch locally
-        run: git branch -D staging || true
+      - name: Run golint
+        run: golint ./...
 
-      - name: Create new staging branch from main
-        run: git checkout -b staging
-
-      - name: Push new staging branch to remote
-        run: git push origin staging --force
+      - name: Run gofmt
+        run: gofmt -l -w .
