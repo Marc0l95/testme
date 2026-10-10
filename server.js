@@ -1,12 +1,9 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { URL } = require('url');
 
 const hostname = '0.0.0.0';
 const port = Number(process.env.PORT || 3000);
-const backendHost = process.env.BACKEND_HOST || '127.0.0.1';
-const backendPort = Number(process.env.BACKEND_PORT || 8000);
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -22,35 +19,7 @@ const mimeTypes = {
   '.jpeg': 'image/jpeg'
 };
 
-const proxyRequest = (req, res) => {
-  const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-  const targetPath = `${requestUrl.pathname}${requestUrl.search || ''}`;
-
-  const proxyRequestOptions = {
-    hostname: backendHost,
-    port: backendPort,
-    path: targetPath,
-    method: req.method,
-    headers: {
-      ...req.headers,
-      host: `${backendHost}:${backendPort}`
-    }
-  };
-
-  const backendReq = http.request(proxyRequestOptions, (backendRes) => {
-    res.writeHead(backendRes.statusCode || 502, backendRes.headers);
-    backendRes.pipe(res);
-  });
-
-  backendReq.on('error', () => {
-    res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ error: 'Backend unavailable', backend: `${backendHost}:${backendPort}` }));
-  });
-
-  req.pipe(backendReq);
-};
-
-const serveStaticFile = (req, res) => {
+const server = http.createServer((req, res) => {
   const requestPath = req.url === '/' ? '/index.html' : req.url.split('?')[0];
   const filePath = path.join(__dirname, requestPath);
 
@@ -73,18 +42,8 @@ const serveStaticFile = (req, res) => {
     });
     res.end(data);
   });
-};
-
-const server = http.createServer((req, res) => {
-  if (req.url && req.url.startsWith('/api')) {
-    proxyRequest(req, res);
-    return;
-  }
-
-  serveStaticFile(req, res);
 });
 
 server.listen(port, hostname, () => {
-  console.log(`Frontend server running at http://${hostname}:${port}`);
-  console.log(`API proxying to http://${backendHost}:${backendPort}`);
+  console.log(`Server running at http://${hostname}:${port}`);
 });
