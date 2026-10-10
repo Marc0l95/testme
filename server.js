@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const hostname = '0.0.0.0';
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 8080);
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -20,6 +20,12 @@ const mimeTypes = {
 };
 
 const server = http.createServer((req, res) => {
+  if (req.url === '/api/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ ok: true, service: 'frontend' }));
+    return;
+  }
+
   const requestPath = req.url === '/' ? '/index.html' : req.url.split('?')[0];
   const filePath = path.join(__dirname, requestPath);
 
